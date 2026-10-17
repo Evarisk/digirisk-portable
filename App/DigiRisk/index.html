@@ -1,0 +1,2983 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DigiRisk Portable — Ajout de risque</title>
+  <link rel="icon" href="img/logo.png" />
+  <style>
+    :root {
+      --primary: #0d8aff;
+      --primary-hover: #0073e6;
+      --bg-dark: #2c3545;
+      --bg-card: #ffffff;
+      --border: #e2e6ec;
+      --text-main: #1b2432;
+      --text-muted: #5a6578;
+      --btn-grey: #eef0f4;
+      --btn-grey-text: #4a5568;
+      --cot-1-bg: #ececec;
+      --cot-1-text: #222222;
+      --cot-2-bg: #f0ad4e;
+      --cot-2-text: #ffffff;
+      --cot-3-bg: #e05353;
+      --cot-3-text: #ffffff;
+      --cot-4-bg: #2b2b2b;
+      --cot-4-text: #ffffff;
+      --orange-cam: #f5911e;
+      --green-gal: #109d78;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #273142 0%, #1e2634 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+    }
+
+    /* Top bar for Server Connection & Work Unit Selection */
+    .topbar {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      flex-wrap: wrap;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .topbar-logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      object-fit: contain;
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fee2e2;
+      color: #b91c1c;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .status-badge.connected {
+      background: #d1fae5;
+      color: #047857;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .element-selector-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1 1 260px;
+      min-width: 200px;
+      overflow: hidden;
+    }
+
+    .element-selector-wrap label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .select-element {
+      flex: 1;
+      width: 100%;
+      min-width: 0;
+      height: 36px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 0 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      background: #f8fafc;
+      outline: none;
+      text-overflow: ellipsis;
+    }
+
+    .select-element:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .btn-icon-top {
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--text-main);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-icon-top:hover {
+      background: #e2e8f0;
+    }
+
+    .queue-badge {
+      background: var(--orange-cam);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 99px;
+    }
+
+    /* Main DigiRisk Modal Card (exact match to screenshot) */
+    .modal-card {
+      width: 100%;
+      max-width: 900px;
+      background: var(--bg-card);
+      border-radius: 14px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+      padding: 24px 28px 28px;
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      color: #111827;
+      text-transform: uppercase;
+    }
+
+    .modal-header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-add-risk {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-add-risk:hover:not(:disabled) {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-add-risk:disabled {
+      background: #ededed;
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .btn-reset-form {
+      background: none;
+      border: none;
+      color: #9ca3af;
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .btn-reset-form:hover {
+      color: #4b5563;
+    }
+
+    /* Row 1: Risque* + Description */
+    .risk-row {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .risk-cat-col {
+      flex: 0 0 auto;
+      position: relative;
+    }
+
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 8px;
+    }
+
+    .req-star {
+      color: var(--primary);
+      font-weight: 700;
+      margin-left: 1px;
+    }
+
+    .danger-trigger-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .danger-trigger-btn {
+      width: 54px;
+      height: 54px;
+      border-radius: 6px;
+      background: #eeeeee;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all 0.15s;
+    }
+
+    .danger-trigger-btn:hover {
+      background: #e2e4e9;
+      border-color: #cbd5e1;
+    }
+
+    .danger-trigger-btn img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      display: none;
+    }
+
+    .danger-trigger-btn.has-selection {
+      background: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(13, 138, 255, 0.15);
+    }
+
+    .danger-trigger-btn.has-selection img {
+      display: block;
+    }
+
+    .danger-trigger-btn.has-selection .default-hazard-icon {
+      display: none;
+    }
+
+    .caret-down {
+      font-size: 12px;
+      color: #374151;
+    }
+
+    .selected-cat-name {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      max-width: 110px;
+      line-height: 1.2;
+      display: none;
+    }
+
+    /* Danger category grid dropdown */
+    .danger-dropdown {
+      position: absolute;
+      top: 84px;
+      left: 0;
+      z-index: 100;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+      padding: 10px;
+      width: 390px;
+      display: none;
+    }
+
+    .danger-dropdown.open {
+      display: block;
+    }
+
+    .danger-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      max-height: 310px;
+      overflow-y: auto;
+    }
+
+    .danger-item {
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: #f9fafb;
+      transition: all 0.12s;
+    }
+
+    .danger-item:hover {
+      background: #eff6ff;
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .danger-item.active {
+      background: #dbeafe;
+      border-color: var(--primary);
+    }
+
+    .danger-item img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .risk-desc-col {
+      flex: 1;
+    }
+
+    textarea.digirisk-textarea {
+      width: 100%;
+      border: 1px solid #d8dde6;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 14px;
+      color: var(--text-main);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    textarea.digirisk-textarea:focus {
+      border-color: var(--primary);
+    }
+
+    hr.section-divider {
+      border: none;
+      border-top: 1px solid #edf0f5;
+      margin: 20px 0;
+    }
+
+    /* Evaluation Method + Photo toolbar */
+    .eval-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .eval-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .eval-tab {
+      padding: 10px 18px;
+      border-radius: 5px;
+      border: none;
+      font-size: 14.5px;
+      font-weight: 500;
+      cursor: pointer;
+      background: #eeeeee;
+      color: #374151;
+      transition: all 0.15s;
+    }
+
+    .eval-tab.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .info-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #111827;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 4px;
+      cursor: help;
+    }
+
+    /* Media Buttons (Camera + Gallery + Multi-Photo Preview Gallery) */
+    .media-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .photos-gallery-list {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      max-width: 520px;
+    }
+
+    .photos-gallery-list.visible {
+      display: inline-flex;
+    }
+
+    .photo-preview-chip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #f1f5f9;
+      border: 1.5px solid #cbd5e1;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .photo-preview-chip.is-favorite {
+      border-color: var(--primary);
+      background: #eff6ff;
+      box-shadow: 0 0 0 2px rgba(13, 138, 255, 0.15);
+    }
+
+    .photo-preview-chip img {
+      width: 38px;
+      height: 38px;
+      object-fit: cover;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .photo-fav-btn {
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+      transition: color 0.12s, transform 0.12s;
+    }
+
+    .photo-fav-btn:hover {
+      transform: scale(1.15);
+      color: #f59e0b;
+    }
+
+    .photo-preview-chip.is-favorite .photo-fav-btn {
+      color: #f59e0b;
+    }
+
+    .photo-preview-remove {
+      border: none;
+      background: #ef4444;
+      color: #fff;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 12px;
+      cursor: pointer;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .photos-clear-all-btn {
+      border: 1px solid #fecaca;
+      background: #fef2f2;
+      color: #dc2626;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .photos-clear-all-btn:hover {
+      background: #fee2e2;
+    }
+
+    .btn-media-square {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      border: none;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.12s, opacity 0.12s;
+    }
+
+    .btn-media-square:hover {
+      transform: translateY(-1px);
+      opacity: 0.93;
+    }
+
+    .btn-camera {
+      background: var(--orange-cam);
+    }
+
+    .btn-gallery {
+      background: var(--green-gal);
+    }
+
+    /* Evaluation Row: Cotation + Commentaire */
+    .eval-row {
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .cotation-col {
+      flex: 0 0 auto;
+    }
+
+    .cotation-boxes {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .cot-box {
+      min-width: 64px;
+      height: 50px;
+      padding: 0 12px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      border: 3px solid transparent;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+
+    .cot-box:hover {
+      transform: translateY(-2px);
+    }
+
+    .cot-box.scale-1 {
+      background: var(--cot-1-bg);
+      color: var(--cot-1-text);
+    }
+
+    .cot-box.scale-2 {
+      background: var(--cot-2-bg);
+      color: var(--cot-2-text);
+    }
+
+    .cot-box.scale-3 {
+      background: var(--cot-3-bg);
+      color: var(--cot-3-text);
+    }
+
+    .cot-box.scale-4 {
+      background: var(--cot-4-bg);
+      color: var(--cot-4-text);
+    }
+
+    .cot-box.selected {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(13, 138, 255, 0.28);
+      transform: scale(1.05);
+    }
+
+    /* Advanced Evaluation Grid */
+    .advanced-eval-panel {
+      display: none;
+      width: 100%;
+      margin-bottom: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .advanced-eval-panel.visible {
+      display: block;
+    }
+
+    .adv-criterion-row {
+      display: grid;
+      grid-template-columns: 110px repeat(5, 1fr);
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .adv-criterion-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .adv-choice {
+      padding: 6px 4px;
+      font-size: 11px;
+      text-align: center;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      background: #fff;
+      cursor: pointer;
+      line-height: 1.2;
+      min-height: 38px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .adv-choice:hover {
+      border-color: var(--primary);
+    }
+
+    .adv-choice.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+
+    .adv-choice.disabled-cell {
+      background: #f1f5f9;
+      color: #94a3b8;
+      cursor: default;
+      border-style: dashed;
+    }
+
+    .comment-col {
+      flex: 1;
+      min-width: 260px;
+    }
+
+    /* Task Block ("Le bloc Tâche") */
+    .task-block {
+      margin-top: 4px;
+    }
+
+    .task-header-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .task-title-label {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1f2937;
+      white-space: nowrap;
+    }
+
+    .task-label-input {
+      flex: 1;
+      height: 38px;
+      border: 1px solid #d8dde6;
+      border-radius: 5px;
+      padding: 0 12px;
+      font-size: 14px;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .task-label-input:focus {
+      border-color: var(--primary);
+    }
+
+    .task-fields-row {
+      display: grid;
+      grid-template-columns: 1.2fr 1.2fr 1.1fr 0.7fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .task-input-group {
+      display: flex;
+      align-items: center;
+      border: 1px solid #d8dde6;
+      border-radius: 5px;
+      height: 38px;
+      padding: 0 10px;
+      background: #fff;
+      gap: 8px;
+    }
+
+    .task-input-group:focus-within {
+      border-color: var(--primary);
+    }
+
+    .task-input-group input,
+    .task-input-group select {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 13px;
+      color: var(--text-main);
+      background: transparent;
+    }
+
+    .task-icon-outside {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .currency-symbol {
+      font-weight: 700;
+      color: #111827;
+      font-size: 14px;
+    }
+
+    /* Modals: Settings & Webcam */
+    .overlay-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      padding: 16px;
+    }
+
+    .overlay-backdrop.open {
+      display: flex;
+    }
+
+    .dialog-box {
+      background: #fff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      padding: 22px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    .dialog-box h3 {
+      font-size: 17px;
+      margin-bottom: 14px;
+      color: #111827;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+
+    .form-group input {
+      width: 100%;
+      height: 38px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 0 10px;
+      font-size: 13.5px;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn-secondary {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .btn-primary {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    /* Toast feedback */
+    .toast-bar {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: #1e293b;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      display: none;
+      z-index: 1000;
+      max-width: 420px;
+    }
+
+    .toast-bar.show {
+      display: block;
+    }
+
+    .toast-bar.success {
+      background: #059669;
+    }
+
+    .toast-bar.error {
+      background: #dc2626;
+    }
+
+    video#webcamVideo {
+      width: 100%;
+      max-height: 320px;
+      background: #000;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 720px) {
+      .task-fields-row {
+        grid-template-columns: 1fr;
+      }
+      .risk-row {
+        flex-direction: column;
+      }
+      .danger-dropdown {
+        width: 300px;
+      }
+    }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .queue-list {
+      max-height: 360px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .queue-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .queue-item-cat {
+      width: 42px;
+      height: 42px;
+      border-radius: 6px;
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .queue-item-cat img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+    }
+
+    .queue-item-photo {
+      width: 42px;
+      height: 42px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid #cbd5e1;
+      flex-shrink: 0;
+    }
+
+    .queue-item-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .queue-item-title {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .queue-item-meta {
+      font-size: 12px;
+      color: #64748b;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 3px;
+      align-items: center;
+    }
+
+    .queue-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .btn-queue-small {
+      padding: 5px 9px;
+      border-radius: 5px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-queue-small:hover {
+      background: #eff6ff;
+      border-color: var(--primary);
+    }
+
+    .btn-queue-del {
+      color: #dc2626;
+      border-color: #fecaca;
+    }
+
+    .btn-queue-del:hover {
+      background: #fef2f2;
+      border-color: #dc2626;
+    }
+
+    /* Sélecteur de Session active & Sélecteur MultiCompany (style Dolibarr) */
+    .session-pill-select,
+    .multicompany-pill-wrap {
+      display: inline-flex;
+      align-items: center;
+      height: 36px;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 0 10px;
+      gap: 6px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      transition: border-color 0.15s;
+    }
+
+    .session-pill-select:focus-within,
+    .multicompany-pill-wrap:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(13, 138, 255, 0.12);
+    }
+
+    .session-pill-select select,
+    .multicompany-pill-wrap select {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1f2937;
+      cursor: pointer;
+      max-width: 175px;
+      text-overflow: ellipsis;
+    }
+
+    .mc-building-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    /* Liste des connexions établies dans la modale */
+    .connections-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 210px;
+      overflow-y: auto;
+      margin-bottom: 14px;
+    }
+
+    .conn-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #f8fafc;
+      transition: all 0.12s;
+    }
+
+    .conn-card.active-conn {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+
+    .conn-card-info {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .conn-card-name {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .conn-card-sub {
+      font-size: 11.5px;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .conn-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRE DE CONNEXION, SESSION, MULTICOMPANY & UNITÉ DE TRAVAIL -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <img src="img/logo.png" alt="DigiRisk" class="topbar-logo" onerror="this.style.display='none'" />
+      <div id="connectionBadge" class="status-badge" onclick="openSettingsModal()" title="Cliquer pour gérer les sessions et connexions DigiRisk">
+        <span class="status-dot"></span>
+        <span id="connectionText">Non connecté</span>
+      </div>
+
+      <!-- Sélecteur de Session (Connexions établies) -->
+      <div class="session-pill-select" title="Session / Serveur DigiRisk actif">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+          <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+          <line x1="6" y1="6" x2="6.01" y2="6"></line>
+          <line x1="6" y1="18" x2="6.01" y2="18"></line>
+        </svg>
+        <select id="sessionSelect" onchange="switchActiveSession(this.value)">
+          <option value="">Aucune session</option>
+        </select>
+      </div>
+
+      <!-- Sélecteur MultiCompany (style Dolibarr : icône + nom d'entité) -->
+      <div class="multicompany-pill-wrap" title="Entité MultiCompany active dans cette session">
+        <span class="mc-building-icon">MC</span>
+        <select id="entitySelect" onchange="switchActiveEntity(this.value)">
+          <option value="1">Entité #1</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="element-selector-wrap">
+      <label for="elementSelect">Unité / GP* :</label>
+      <select id="elementSelect" class="select-element">
+        <option value="">-- Connectez-vous pour charger les UT/GP --</option>
+      </select>
+    </div>
+
+    <div class="topbar-actions">
+      <button type="button" id="btnSyncQueue" class="btn-icon-top" onclick="openQueueModal()" title="Voir et synchroniser les risques en attente">
+        <span>&#x1F4CB; En attente</span>
+        <span id="queueCountBadge" class="queue-badge">0</span>
+      </button>
+      <button type="button" class="btn-icon-top" onclick="refreshServerOptions()" title="Actualiser les entités, unités et utilisateurs">
+        &#x21bb;
+      </button>
+      <button type="button" class="btn-icon-top" onclick="openSettingsModal()">
+        &#x2699; Sessions
+      </button>
+    </div>
+  </div>
+
+  <!-- MODALE D'AJOUT DU RISQUE (Fidèle à DigiRisk Dolibarr) -->
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalRiskTitle">AJOUT DU RISQUE</h2>
+      <div class="modal-header-right">
+        <button type="button" id="btnSubmitRisk" class="btn-add-risk" disabled onclick="submitRiskForm()">
+          <span>&#xFF0B; Ajouter le risque</span>
+        </button>
+        <button type="button" class="btn-reset-form" title="Réinitialiser le formulaire" onclick="resetRiskForm()">&#x2715;</button>
+      </div>
+    </div>
+
+    <!-- LIGNE 1 : Risque* + Description -->
+    <div class="risk-row">
+      <div class="risk-cat-col">
+        <div class="field-label">Risque<span class="req-star">*</span></div>
+        <div class="danger-trigger-wrap" id="dangerTrigger" onclick="toggleDangerDropdown(event)">
+          <div class="danger-trigger-btn" id="dangerTriggerBtn">
+            <!-- Default hazard triangle + plus icon -->
+            <svg class="default-hazard-icon" width="26" height="26" viewBox="0 0 24 24" fill="none">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="#4a5568"/>
+              <line x1="12" y1="9" x2="12" y2="13" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="12" cy="17" r="1" fill="#fff"/>
+              <circle cx="18.5" cy="5.5" r="4.5" fill="#718096"/>
+              <path d="M18.5 3.5v4M16.5 5.5h4" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <img id="selectedDangerImg" src="" alt="Catégorie sélectionnée" />
+          </div>
+          <span class="caret-down">&#x25BE;</span>
+        </div>
+        <div id="selectedDangerLabel" class="selected-cat-name"></div>
+
+        <!-- Dropdown Grille des catégories de dangers -->
+        <div id="dangerDropdown" class="danger-dropdown">
+          <div id="dangerGrid" class="danger-grid"></div>
+        </div>
+      </div>
+
+      <div class="risk-desc-col">
+        <div class="field-label">Description</div>
+        <textarea id="riskDescription" class="digirisk-textarea" rows="3" placeholder="Décrivez le risque identifié..."></textarea>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- BARRE D'OUTILS ÉVALUATION + PHOTO -->
+    <div class="eval-toolbar">
+      <div class="eval-tabs">
+        <button type="button" id="tabSimple" class="eval-tab active" onclick="setEvaluationMethod('standard')">Évaluation simple</button>
+        <button type="button" id="tabAdvanced" class="eval-tab" onclick="setEvaluationMethod('advanced')">Évaluation avancée</button>
+        <span class="info-icon" title="Choisissez l'évaluation simple par seuil (standard) ou l'évaluation avancée multi-critères (Gravité, Exposition, Occurrence, Formation, Protection)">i</span>
+      </div>
+
+      <div class="media-actions">
+        <div id="photosGalleryList" class="photos-gallery-list"></div>
+
+        <!-- Bouton Caméra (Orange) -->
+        <button type="button" class="btn-media-square btn-camera" onclick="openWebcamModal()" title="Prendre une ou plusieurs photos avec la caméra">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3z"/>
+          </svg>
+        </button>
+
+        <!-- Bouton Galerie / Fichier (Vert) -->
+        <button type="button" class="btn-media-square btn-gallery" onclick="document.getElementById('filePhotoInput').click()" title="Sélectionner une ou plusieurs photos depuis l'ordinateur">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/>
+          </svg>
+        </button>
+        <input type="file" id="filePhotoInput" multiple accept="image/jpeg,image/png,image/webp,image/gif" style="display:none" onchange="handlePhotoFileSelect(event)" />
+      </div>
+    </div>
+
+    <!-- GRILLE D'ÉVALUATION AVANCÉE (Masquée en mode standard/simple) -->
+    <div id="advancedEvalPanel" class="advanced-eval-panel">
+      <div class="field-label" style="margin-bottom:8px;">
+        <span class="info-icon" style="margin-left:0;margin-right:4px;">i</span>
+        <span>Sélectionnez votre évaluation</span><span class="req-star">*</span>
+      </div>
+      <div id="advancedCriteriaContainer"></div>
+    </div>
+
+    <!-- LIGNE 2 : Évaluation* (Standard: 0-47, 48-50, 51-80, 81-100 / Avancée: Évaluation calculée*) + Commentaire -->
+    <div class="eval-row">
+      <!-- Bloc Cotation Standard (Simple) -->
+      <div id="simpleCotationCol" class="cotation-col">
+        <div class="field-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+            <polyline points="16 7 22 7 22 13"></polyline>
+          </svg>
+          <span>Évaluation</span><span class="req-star">*</span>
+        </div>
+
+        <div class="cotation-boxes">
+          <div class="cot-box scale-1" data-cotation="0" onclick="selectSimpleCotation(0)">0-47</div>
+          <div class="cot-box scale-2" data-cotation="48" onclick="selectSimpleCotation(48)">48-50</div>
+          <div class="cot-box scale-3" data-cotation="51" onclick="selectSimpleCotation(51)">51-80</div>
+          <div class="cot-box scale-4" data-cotation="100" onclick="selectSimpleCotation(100)">81-100</div>
+        </div>
+      </div>
+
+      <!-- Bloc Évaluation calculée (Mode Avancé, identique à DigiRisk Dolibarr) -->
+      <div id="calculatedCotationCol" class="cotation-col" style="display:none;">
+        <div class="field-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+            <polyline points="16 7 22 7 22 13"></polyline>
+          </svg>
+          <span>Évaluation calculée</span><span class="req-star">*</span>
+        </div>
+        <div class="cotation-boxes">
+          <div id="calculatedCotationBadge" class="cot-box scale-1 selected" style="cursor:default;min-width:64px;">0</div>
+        </div>
+      </div>
+
+      <div class="comment-col">
+        <div class="field-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 11H5V9h2v2zm4 0H9V9h2v2zm4 0h-2V9h2v2z"/>
+          </svg>
+          <span>Commentaire</span>
+        </div>
+        <textarea id="evalComment" class="digirisk-textarea" rows="3" placeholder="Commentaire sur l'évaluation..."></textarea>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- LIGNE 3 : LE BLOC TÂCHE -->
+    <div class="task-block">
+      <div class="task-header-row">
+        <label class="task-title-label" for="taskLabel">Tâche</label>
+        <input type="text" id="taskLabel" class="task-label-input" placeholder="Libellé" />
+      </div>
+
+      <div class="task-fields-row">
+        <!-- Date de début -->
+        <div class="task-input-group" title="Date de début de la tâche">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+            <line x1="12" y1="14" x2="12" y2="18"></line>
+            <line x1="10" y1="16" x2="14" y2="16"></line>
+          </svg>
+          <input type="datetime-local" id="taskDateStart" step="1" />
+        </div>
+
+        <!-- Date de fin -->
+        <div class="task-input-group" title="Date de fin de la tâche">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+            <polyline points="9 16 11 18 15 14"></polyline>
+          </svg>
+          <input type="datetime-local" id="taskDateEnd" />
+        </div>
+
+        <!-- Responsable -->
+        <div class="task-icon-outside">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#6b7280">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+          <div class="task-input-group" style="flex:1;">
+            <select id="taskExecutive">
+              <option value="0">Responsable</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Budget € -->
+        <div class="task-input-group">
+          <input type="number" id="taskBudget" placeholder="Budget" min="0" step="0.01" />
+          <span class="currency-symbol">&euro;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE GESTION DES SESSIONS & CONNEXIONS ÉTABLIES -->
+  <div id="settingsModal" class="overlay-backdrop">
+    <div class="dialog-box" style="max-width: 600px;">
+      <h3>&#x1F517; Sessions &amp; Connexions DigiRisk établies</h3>
+
+      <!-- Listing des connexions établies -->
+      <div style="font-size:12.5px;font-weight:700;color:#475569;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+        <span>Connexions enregistrées</span>
+        <button type="button" class="btn-queue-small" onclick="prepareNewConnectionForm()">&#xFF0B; Nouvelle connexion</button>
+      </div>
+      <div id="connectionsListContainer" class="connections-list"></div>
+
+      <hr style="border:none;border-top:1px solid #e2e8f0;margin:14px 0;" />
+
+      <h4 id="connFormTitle" style="font-size:14.5px;margin-bottom:10px;color:#0f172a;">Ajouter / Modifier une session</h4>
+      <input type="hidden" id="cfgSessionId" value="" />
+
+      <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:10px;">
+        <div class="form-group">
+          <label for="cfgSessionName">Nom de la session (ex: Evarisk Prod)</label>
+          <input type="text" id="cfgSessionName" placeholder="Ex: Démo DigiRisk" />
+        </div>
+        <div class="form-group">
+          <label for="cfgServerUrl">URL du serveur Dolibarr / DigiRisk</label>
+          <input type="url" id="cfgServerUrl" placeholder="https://demodoli.digirisk.com" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="cfgApiKey">Clé API (`DOLAPIKEY`) — ou utilisez Identifiant/Mot de passe ci-dessous</label>
+        <input type="password" id="cfgApiKey" placeholder="Clé API Dolibarr" />
+      </div>
+
+      <details style="margin-bottom:12px;font-size:12.5px;color:#475569;background:#f8fafc;padding:8px 12px;border-radius:6px;border:1px solid #e2e8f0;">
+        <summary style="cursor:pointer;font-weight:600;">Récupérer ma clé API avec mon identifiant et mot de passe</summary>
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-top:8px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="cfgLogin">Identifiant</label>
+            <input type="text" id="cfgLogin" placeholder="ex: demo" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="cfgPassword">Mot de passe</label>
+            <input type="password" id="cfgPassword" placeholder="Mot de passe" />
+          </div>
+          <button type="button" class="btn-secondary" style="height:38px;" onclick="fetchApiKeyFromLogin()">Obtenir la clé</button>
+        </div>
+      </details>
+
+      <div style="display:grid;grid-template-columns:1fr 1.5fr 0.8fr;gap:10px;">
+        <div class="form-group">
+          <label for="cfgEntity">Entité active (ID)</label>
+          <input type="number" id="cfgEntity" value="1" min="1" />
+        </div>
+        <div class="form-group">
+          <label for="cfgEntitiesList">Entités MultiCompany (`id:Nom, id:Nom`)</label>
+          <input type="text" id="cfgEntitiesList" placeholder="1:Evarisk, 2:Filiale Sud" />
+        </div>
+        <div class="form-group">
+          <label for="cfgProjectId">ID Projet DU</label>
+          <input type="number" id="cfgProjectId" value="1" min="1" />
+        </div>
+      </div>
+
+      <!-- Zone de contrôle / diagnostic de l'installation Dolibarr (/ vs /htdocs) -->
+      <div id="installCheckResult" style="display:none;font-size:12px;padding:10px 12px;border-radius:8px;margin-bottom:10px;border:1px solid #cbd5e1;background:#f8fafc;line-height:1.5;"></div>
+
+      <div class="dialog-actions" style="justify-content:space-between;">
+        <button type="button" class="btn-secondary" onclick="testInstallationEndpoints()">&#x1F50D; Tester l'installation (`/` ou `/htdocs`)</button>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn-secondary" onclick="closeSettingsModal()">Fermer</button>
+          <button type="button" class="btn-primary" onclick="saveAndTestConnection()">Enregistrer &amp; Connecter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE CAPTURE CAMÉRA -->
+  <div id="webcamModal" class="overlay-backdrop">
+    <div class="dialog-box">
+      <h3>Prendre une ou plusieurs photos du risque</h3>
+      <video id="webcamVideo" autoplay playsinline></video>
+      <canvas id="webcamCanvas" style="display:none;"></canvas>
+      <div class="dialog-actions">
+        <button type="button" class="btn-secondary" onclick="closeWebcamModal()">Fermer</button>
+        <button type="button" class="btn-secondary" onclick="captureWebcamPhoto(false)">&#x1F4F8; Capturer + Continuer</button>
+        <button type="button" class="btn-primary" onclick="captureWebcamPhoto(true)">&#x2705; Capturer &amp; Terminer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE LISTE DES RISQUES EN ATTENTE DE SYNCHRONISATION -->
+  <div id="queueModal" class="overlay-backdrop">
+    <div class="dialog-box" style="max-width: 680px;">
+      <h3>&#x1F4CB; Risques en attente de synchronisation (<span id="queueModalCount">0</span>)</h3>
+      <p style="font-size:12.5px;color:#64748b;margin-bottom:8px;">
+        Ces risques sont stockés en sécurité dans <code>Data/settings/queue.json</code>. Vous pouvez les recharger dans le formulaire, les supprimer ou lancer la synchronisation vers DigiRisk.
+      </p>
+      <div id="queueListContainer" class="queue-list"></div>
+      <div class="dialog-actions" style="justify-content:space-between;">
+        <button type="button" class="btn-secondary" onclick="exportOfflineQueueJson()">&#x1F4BE; Exporter en JSON</button>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn-secondary" onclick="closeQueueModal()">Fermer</button>
+          <button type="button" id="btnModalSyncAll" class="btn-primary" onclick="syncOfflineQueue()">&#x21bb; Tout synchroniser</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastBar" class="toast-bar"></div>
+
+  <script>
+    // Catégories officielles de dangers DigiRisk (embarquées pour fonctionner même hors-ligne)
+    const DEFAULT_DANGER_CATEGORIES = [
+      { position: 0, name: "Risques de chute de plain-pied", thumbnail_name: "chutePP_PictoCategorie_v2" },
+      { position: 1, name: "Risques de chute de hauteur", thumbnail_name: "chuteH_PictoCategorie_v2" },
+      { position: 3, name: "Risques liés aux circulations internes de véhicules et d'engins", thumbnail_name: "circulation_PictoCategorie_v2" },
+      { position: 4, name: "Risques routiers en mission", thumbnail_name: "circulation_v2" },
+      { position: 5, name: "Risques liés à la charge physique de travail", thumbnail_name: "activitePhysique_v2" },
+      { position: 6, name: "Risques liés à la manutention mécanique", thumbnail_name: "manutentionMe_PictoCategorie_v2" },
+      { position: 7, name: "Risques liés aux produits chimiques, aux émissions et aux déchets", thumbnail_name: "produitsC_PictoCategorie_v2" },
+      { position: 8, name: "Risques liés aux agents biologiques", thumbnail_name: "manqueHygiene_PictoCategorie_v2" },
+      { position: 9, name: "Risques liés aux équipements de travail", thumbnail_name: "machine_PictoCategorie_v2" },
+      { position: 10, name: "Risques liés aux effondrements et aux chutes d'objets", thumbnail_name: "effondrement_PictoCategorie_v2" },
+      { position: 11, name: "Risques et nuisances liés au bruit", thumbnail_name: "nuisances_PictoCategorie_v2" },
+      { position: 12, name: "Risques liés aux ambiances thermiques", thumbnail_name: "climat_PictoCategorie_v2" },
+      { position: 13, name: "Risques d'incendie et d'explosion", thumbnail_name: "incendies_PictoCategorie_v2" },
+      { position: 14, name: "Risques liés à l'électricité", thumbnail_name: "electricite_PictoCategorie_v2" },
+      { position: 15, name: "Risques liés aux ambiances lumineuses", thumbnail_name: "eclairage_PictoCategorie_v2" },
+      { position: 16, name: "Risques liés aux rayonnements", thumbnail_name: "rayonnement_v2" },
+      { position: 17, name: "Risques psychosociaux", thumbnail_name: "rps_v2" },
+      { position: 19, name: "Risques de heurt, de cognement", thumbnail_name: "heurt_PictoCategorie_v2" },
+      { position: 20, name: "Risques liés aux pratiques addictives", thumbnail_name: "pratiques_addictives_PictoCategorie_v2" },
+      { position: 21, name: "Risques liés à l'amiante", thumbnail_name: "amiante_v2" },
+      { position: 31, name: "Risques autres", thumbnail_name: "autre_PictoCategorie_v2" },
+      { position: 18, name: "Risques liés aux vibrations", thumbnail_name: "picto_risk_vibration_48px" },
+      { position: 22, name: "Risques liés aux postures pénibles", thumbnail_name: "picto_risk_strenuous-posture_48px-2" },
+      { position: 23, name: "Risques liés aux activités exercées en milieu hyperbare", thumbnail_name: "Pictogrammes_risk_hyperbar_48_px" },
+      { position: 24, name: "Risques liés au travail de nuit", thumbnail_name: "picto_risk_night-work_48_px" },
+      { position: 25, name: "Risques liés au travail en équipes successives alternantes", thumbnail_name: "picto_risk_rotating-shift-team_48_px-2" },
+      { position: 26, name: "Risques liés au travail répétitif", thumbnail_name: "picto_repetitive-work_48_px" },
+      { position: 27, name: "Agents chimiques dangereux (ACD)", thumbnail_name: "picto_risk_acd_48px" },
+      { position: 28, name: "Manutentions manuelles de charges", thumbnail_name: "picto_risk_heavy-load_48px" },
+      { position: 29, name: "Températures extrêmes", thumbnail_name: "picto_risk_extreme-temperature_48px" },
+      { position: 30, name: "Bruit (Pénibilité)", thumbnail_name: "picto_risk_noise_48px" }
+    ];
+
+    // Matrice officielle Evarisk pour l'évaluation avancée
+    const EVARISK_MATRIX = {
+      0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 8:7, 9:8, 12:10, 16:12, 18:14,
+      24:17, 27:20, 32:25, 36:27, 48:31, 54:35, 64:40, 72:42, 81:44, 96:46,
+      108:48, 128:50, 144:55, 162:60, 192:66, 216:70, 243:77, 256:80, 288:84,
+      324:87, 384:90, 432:92, 512:95, 576:96, 768:98, 1024:100
+    };
+
+    const ADVANCED_CRITERIA = [
+      { key: "gravite", label: "Gravité", options: [
+        { val: 0, text: "Pas de blessure possible" },
+        { val: 1, text: "Blessure légère" },
+        { val: 2, text: "ITT <5 jours ou effet réversible" },
+        { val: 3, text: "ITT >5 jours ou effet irréversible" },
+        { val: 4, text: "Menace sur la vie" }
+      ]},
+      { key: "exposition", label: "Exposition", options: [
+        { val: 0, text: "Jamais en contact" },
+        { val: 1, text: "Rare, 1 fois par an" },
+        { val: 2, text: "Inhabituelle, 1 fois par mois" },
+        { val: 3, text: "Occasionnelle, 1 fois par semaine" },
+        { val: 4, text: "Fréquente, 1 fois par jour" }
+      ]},
+      { key: "occurrence", label: "Occurrence", options: [
+        { val: null, text: "—" },
+        { val: 1, text: "Jamais arrivé" },
+        { val: 2, text: "Est déjà arrivé dans des circonstances exceptionnelles" },
+        { val: 3, text: "S'est produit 2 fois" },
+        { val: 4, text: "Se produit tous les mois" }
+      ]},
+      { key: "formation", label: "Formation", options: [
+        { val: null, text: "—" },
+        { val: 1, text: "Prévention régulière" },
+        { val: 2, text: "Formation individuelle obligatoire" },
+        { val: 3, text: "Formation obligatoire non réalisée" },
+        { val: 4, text: "Pas de formation ni de prévention" }
+      ]},
+      { key: "protection", label: "Protection", options: [
+        { val: null, text: "—" },
+        { val: 1, text: "Intrinsèque" },
+        { val: 2, text: "Collective" },
+        { val: 3, text: "Individuelle" },
+        { val: 4, text: "Rien" }
+      ]}
+    ];
+
+    // État applicatif
+    let appState = {
+      useLocalBackend: window.location.protocol.startsWith("http"),
+      settings: {
+        serverUrl: "",
+        apiKey: "",
+        entity: 1,
+        defaultElementId: 0,
+        duProjectId: 1,
+        activeConnectionId: "",
+        connections: []
+      },
+      categories: DEFAULT_DANGER_CATEGORIES,
+      elements: [],
+      users: [],
+      entities: [{ id: 1, label: "Evarisk (#1)" }],
+      selectedCategory: null,
+      evaluationMethod: "standard",
+      selectedCotation: null,
+      advancedValues: { gravite: 1, exposition: 1, occurrence: 1, formation: 1, protection: 1 },
+      photos: [],
+      webcamStream: null,
+      offlineQueue: []
+    };
+
+    // Initialisation au chargement
+    window.addEventListener("DOMContentLoaded", async () => {
+      if (appState.useLocalBackend) {
+        setInterval(() => {
+          fetch("/local/ping", { cache: "no-store" }).catch(() => {});
+        }, 4000);
+      }
+      initDefaultStartDate();
+      renderDangerGrid();
+      renderAdvancedGrid();
+      await loadSettingsAndQueue();
+      document.addEventListener("click", (e) => {
+        const dd = document.getElementById("dangerDropdown");
+        const trig = document.getElementById("dangerTrigger");
+        if (dd.classList.contains("open") && !dd.contains(e.target) && !trig.contains(e.target)) {
+          dd.classList.remove("open");
+        }
+      });
+    });
+
+    function initDefaultStartDate() {
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, "0");
+      const formatted = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      document.getElementById("taskDateStart").value = formatted;
+    }
+
+    function showToast(msg, type = "info") {
+      const bar = document.getElementById("toastBar");
+      bar.textContent = msg;
+      bar.className = `toast-bar show ${type}`;
+      setTimeout(() => { bar.className = "toast-bar"; }, 4200);
+    }
+
+    function parseEntitiesString(str, defaultEntityId = 1) {
+      const list = [];
+      String(str || "").split(",").forEach((part) => {
+        const clean = part.trim();
+        if (!clean) return;
+        const m = clean.match(/^(\d+)\s*:\s*(.+)$/);
+        if (m) {
+          list.push({ id: Number(m[1]), label: m[2].trim() });
+        } else if (/^\d+$/.test(clean)) {
+          list.push({ id: Number(clean), label: `Entité #${clean}` });
+        } else {
+          list.push({ id: list.length + 1, label: clean });
+        }
+      });
+      if (list.length === 0) {
+        list.push({ id: Number(defaultEntityId) || 1, label: `Entité #${Number(defaultEntityId) || 1}` });
+      }
+      return list;
+    }
+
+    function formatEntitiesString(entities) {
+      if (!Array.isArray(entities) || entities.length === 0) return "1:Entité principale";
+      return entities.map((e) => `${e.id}:${e.label}`).join(", ");
+    }
+
+    function normalizeConnectionsInSettings() {
+      if (!Array.isArray(appState.settings.connections)) {
+        appState.settings.connections = [];
+      }
+      // Migration automatique d'une configuration simple vers la liste des sessions
+      if (appState.settings.connections.length === 0 && appState.settings.serverUrl) {
+        let hostName = "Serveur DigiRisk";
+        try { hostName = new URL(appState.settings.serverUrl).hostname; } catch (_) {}
+        const migratedId = "conn-" + Date.now();
+        appState.settings.connections.push({
+          id: migratedId,
+          name: hostName,
+          serverUrl: appState.settings.serverUrl,
+          apiKey: appState.settings.apiKey || "",
+          entity: Number(appState.settings.entity) || 1,
+          entities: [{ id: Number(appState.settings.entity) || 1, label: hostName.split(".")[0] || "Entité #1" }],
+          duProjectId: Number(appState.settings.duProjectId) || 1,
+          defaultElementId: Number(appState.settings.defaultElementId) || 0,
+          lastConnectedAt: new Date().toISOString()
+        });
+        appState.settings.activeConnectionId = migratedId;
+      }
+
+      const active = getActiveConnection();
+      if (active) {
+        appState.settings.activeConnectionId = active.id;
+        appState.settings.serverUrl = active.serverUrl;
+        appState.settings.apiKey = active.apiKey;
+        appState.settings.entity = Number(active.entity) || 1;
+        appState.settings.duProjectId = Number(active.duProjectId) || 1;
+        appState.settings.defaultElementId = Number(active.defaultElementId) || 0;
+        appState.entities = Array.isArray(active.entities) && active.entities.length > 0
+          ? active.entities
+          : [{ id: Number(active.entity) || 1, label: active.name || `Entité #${active.entity || 1}` }];
+      }
+      populateSessionsSelect();
+      populateEntitiesSelect();
+    }
+
+    function getActiveConnection() {
+      const conns = appState.settings.connections || [];
+      if (conns.length === 0) return null;
+      return conns.find((c) => c.id === appState.settings.activeConnectionId) || conns[0];
+    }
+
+    function populateSessionsSelect() {
+      const sel = document.getElementById("sessionSelect");
+      if (!sel) return;
+      const conns = appState.settings.connections || [];
+      sel.innerHTML = "";
+      if (conns.length === 0) {
+        sel.innerHTML = `<option value="">-- Aucune session --</option>`;
+        return;
+      }
+      conns.forEach((c) => {
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.textContent = c.name || c.serverUrl;
+        if (c.id === appState.settings.activeConnectionId) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    function populateEntitiesSelect() {
+      const sel = document.getElementById("entitySelect");
+      if (!sel) return;
+      sel.innerHTML = "";
+      const list = Array.isArray(appState.entities) && appState.entities.length > 0
+        ? appState.entities
+        : [{ id: Number(appState.settings.entity) || 1, label: `Entité #${appState.settings.entity || 1}` }];
+
+      list.forEach((ent) => {
+        const opt = document.createElement("option");
+        opt.value = ent.id;
+        opt.textContent = ent.label ? `${ent.label} (#${ent.id})` : `Entité #${ent.id}`;
+        if (Number(ent.id) === Number(appState.settings.entity)) {
+          opt.selected = true;
+        }
+        sel.appendChild(opt);
+      });
+    }
+
+    async function switchActiveSession(sessionId) {
+      if (!sessionId) return;
+      appState.settings.activeConnectionId = sessionId;
+      normalizeConnectionsInSettings();
+      await persistSettingsAndQueue();
+      await refreshServerOptions(false);
+    }
+
+    async function switchActiveEntity(entityId) {
+      const numId = Number(entityId) || 1;
+      appState.settings.entity = numId;
+      appState.settings.defaultElementId = 0;
+      const active = getActiveConnection();
+      if (active) {
+        active.entity = numId;
+        active.defaultElementId = 0;
+      }
+      const elSel = document.getElementById("elementSelect");
+      if (elSel) {
+        elSel.innerHTML = `<option value="">Chargement des UT/GP (Entité #${numId})...</option>`;
+      }
+      await persistSettingsAndQueue();
+      showToast(`Chargement des UT/GP de l'entité #${numId}...`, "info");
+      await refreshServerOptions(false);
+    }
+
+    // Lecture / sauvegarde des paramètres (Data/settings/settings.json via serveur PortableApps ou localStorage en secours)
+    async function loadSettingsAndQueue() {
+      try {
+        if (appState.useLocalBackend) {
+          const res = await fetch("/local/settings");
+          if (res.ok) {
+            const data = await res.json();
+            appState.settings = Object.assign(appState.settings, data.settings || {});
+            appState.offlineQueue = Array.isArray(data.queue) ? data.queue : [];
+          }
+        } else {
+          const saved = localStorage.getItem("digirisk_portable_settings");
+          if (saved) appState.settings = Object.assign(appState.settings, JSON.parse(saved));
+          const savedQ = localStorage.getItem("digirisk_portable_queue");
+          if (savedQ) appState.offlineQueue = JSON.parse(savedQ);
+        }
+      } catch (e) {
+        console.warn("Mode autonome localStorage actif", e);
+      }
+
+      normalizeConnectionsInSettings();
+      updateQueueUI();
+      if (appState.settings.serverUrl && appState.settings.apiKey) {
+        await refreshServerOptions(true);
+      } else {
+        openSettingsModal();
+      }
+    }
+
+    async function persistSettingsAndQueue() {
+      localStorage.setItem("digirisk_portable_settings", JSON.stringify(appState.settings));
+      localStorage.setItem("digirisk_portable_queue", JSON.stringify(appState.offlineQueue));
+      if (appState.useLocalBackend) {
+        try {
+          await fetch("/local/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-DigiRisk-Local": "1" },
+            body: JSON.stringify({
+              settings: appState.settings,
+              queue: appState.offlineQueue
+            })
+          });
+        } catch (e) {}
+      }
+      updateQueueUI();
+    }
+
+    function updateQueueUI() {
+      const badge = document.getElementById("queueCountBadge");
+      const count = appState.offlineQueue.length;
+      badge.textContent = count;
+      badge.style.background = count > 0 ? "var(--orange-cam)" : "#94a3b8";
+      const modalCount = document.getElementById("queueModalCount");
+      if (modalCount) modalCount.textContent = count;
+      if (document.getElementById("queueModal")?.classList.contains("open")) {
+        renderQueueList();
+      }
+    }
+
+    function openQueueModal() {
+      renderQueueList();
+      document.getElementById("queueModal").classList.add("open");
+    }
+
+    function closeQueueModal() {
+      document.getElementById("queueModal").classList.remove("open");
+    }
+
+    function getCotationBadgeStyle(score) {
+      const s = Number(score) || 0;
+      if (s >= 81) return "background:#2b2b2b;color:#fff;";
+      if (s >= 51) return "background:#e05353;color:#fff;";
+      if (s >= 48) return "background:#f0ad4e;color:#fff;";
+      return "background:#ececec;color:#222;";
+    }
+
+    function getCotationLabel(score) {
+      const s = Number(score) || 0;
+      if (s === 0) return "0-47";
+      if (s === 48) return "48-50";
+      if (s === 51) return "51-80";
+      if (s === 100) return "81-100";
+      return `${s}/100`;
+    }
+
+    function renderQueueList() {
+      const container = document.getElementById("queueListContainer");
+      const countSpan = document.getElementById("queueModalCount");
+      const syncAllBtn = document.getElementById("btnModalSyncAll");
+      const queue = appState.offlineQueue || [];
+      countSpan.textContent = queue.length;
+      if (syncAllBtn) syncAllBtn.disabled = queue.length === 0;
+
+      if (queue.length === 0) {
+        container.innerHTML = `<div style="padding:24px;text-align:center;color:#64748b;background:#f8fafc;border-radius:8px;border:1px dashed #cbd5e1;">Aucun risque en attente de synchronisation.</div>`;
+        return;
+      }
+
+      container.innerHTML = "";
+      queue.forEach((item, idx) => {
+        const rp = item.riskPayload || {};
+        const tp = item.taskPayload || null;
+        const cat = appState.categories.find((c) => Number(c.position) === Number(rp.category)) || DEFAULT_DANGER_CATEGORIES[0];
+        const catImg = `img/categorieDangers/${cat.thumbnail_name}.png`;
+        const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleString("fr-FR") : "";
+        const itemPhotos = Array.isArray(rp.photos) && rp.photos.length > 0
+          ? rp.photos
+          : (rp.photo_base64 ? [{ photo_base64: rp.photo_base64, filename: "photo.jpg" }] : []);
+        const firstPhotoSrc = itemPhotos[0] ? (itemPhotos[0].photo_base64 || itemPhotos[0]) : "";
+
+        const row = document.createElement("div");
+        row.className = "queue-item";
+        row.innerHTML = `
+          <div class="queue-item-cat" title="${cat.name}">
+            <img src="${catImg}" alt="" />
+          </div>
+          ${firstPhotoSrc ? `<div style="position:relative;flex-shrink:0;"><img src="${firstPhotoSrc}" class="queue-item-photo" alt="Photo" title="${itemPhotos.length} photo(s) jointe(s)" />${itemPhotos.length > 1 ? `<span style="position:absolute;bottom:-4px;right:-4px;background:var(--primary);color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:99px;">+${itemPhotos.length - 1}</span>` : ""}</div>` : ""}
+          <div class="queue-item-body">
+            <div class="queue-item-title">${escapeHtml(rp.description || cat.name)}</div>
+            <div class="queue-item-meta">
+              <span style="padding:1px 6px;border-radius:4px;font-weight:700;${getCotationBadgeStyle(rp.cotation)}">${getCotationLabel(rp.cotation)}</span>
+              <span>UT/GP #${rp.fk_element || 1}</span>
+              ${itemPhotos.length > 0 ? `<span>&#x1F4F7; ${itemPhotos.length} photo(s)</span>` : ""}
+              ${tp && tp.label ? `<span>&#x2705; Tâche : ${escapeHtml(tp.label)}${tp.budget_amount ? ` (${tp.budget_amount} €)` : ""}</span>` : ""}
+              ${dateStr ? `<span>&#x1F552; ${dateStr}</span>` : ""}
+            </div>
+            ${item.lastError ? `<div style="font-size:11.5px;color:#dc2626;margin-top:3px;">Dernière erreur : ${escapeHtml(item.lastError)}</div>` : ""}
+          </div>
+          <div class="queue-item-actions">
+            <button type="button" class="btn-queue-small" onclick="syncSingleQueuedRisk(${idx})" title="Envoyer ce risque maintenant">&#x21bb; Envoyer</button>
+            <button type="button" class="btn-queue-small" onclick="loadQueuedRiskIntoForm(${idx})" title="Recharger dans le formulaire pour modifier">&#x270E; Éditer</button>
+            <button type="button" class="btn-queue-small btn-queue-del" onclick="deleteQueuedRisk(${idx})" title="Supprimer de la file d'attente">&#x1F5D1;</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    async function deleteQueuedRisk(index) {
+      appState.offlineQueue.splice(index, 1);
+      await persistSettingsAndQueue();
+      renderQueueList();
+      showToast("Risque retiré de la file d'attente.", "info");
+    }
+
+    async function loadQueuedRiskIntoForm(index) {
+      const item = appState.offlineQueue[index];
+      if (!item) return;
+      const rp = item.riskPayload || {};
+      const tp = item.taskPayload || null;
+
+      const cat = appState.categories.find((c) => Number(c.position) === Number(rp.category)) || DEFAULT_DANGER_CATEGORIES[0];
+      selectDangerCategory(Number(cat.position), cat.name, `img/categorieDangers/${cat.thumbnail_name}.png`);
+
+      document.getElementById("riskDescription").value = rp.description || "";
+      document.getElementById("evalComment").value = rp.comment || "";
+      if (rp.method === "advanced") {
+        ["gravite", "exposition", "occurrence", "formation", "protection"].forEach((k) => {
+          if (rp[k] !== undefined && rp[k] !== null) {
+            appState.advancedValues[k] = Number(rp[k]);
+          }
+        });
+        renderAdvancedGrid();
+        setEvaluationMethod("advanced");
+      } else {
+        setEvaluationMethod("standard");
+        selectSimpleCotation(rp.cotation ?? 0);
+      }
+
+      if (Array.isArray(rp.photos) && rp.photos.length > 0) {
+        appState.photos = rp.photos.map((p, i) => ({
+          id: `q-${Date.now()}-${i}`,
+          photo_base64: p.photo_base64 || p,
+          filename: p.filename || `photo-${i + 1}.jpg`,
+          isFavorite: i === 0
+        }));
+        renderPhotosGallery();
+      } else if (rp.photo_base64) {
+        appState.photos = [{
+          id: `q-${Date.now()}-0`,
+          photo_base64: rp.photo_base64,
+          filename: "photo-attente.jpg",
+          isFavorite: true
+        }];
+        renderPhotosGallery();
+      } else {
+        clearSelectedPhoto();
+      }
+
+      if (tp) {
+        document.getElementById("taskLabel").value = tp.label || "";
+        document.getElementById("taskBudget").value = tp.budget_amount || "";
+        document.getElementById("taskExecutive").value = String(tp.executive_id || 0);
+      }
+
+      appState.offlineQueue.splice(index, 1);
+      await persistSettingsAndQueue();
+      closeQueueModal();
+      showToast("Risque chargé dans le formulaire pour modification.", "info");
+    }
+
+    async function syncSingleQueuedRisk(index) {
+      const item = appState.offlineQueue[index];
+      if (!item) return;
+      try {
+        await sendRiskAndTaskToServer(item.riskPayload, item.taskPayload);
+        appState.offlineQueue.splice(index, 1);
+        await persistSettingsAndQueue();
+        renderQueueList();
+        showToast("Risque synchronisé avec succès !", "success");
+      } catch (err) {
+        item.lastError = err.message;
+        await persistSettingsAndQueue();
+        renderQueueList();
+        showToast(`Échec de synchronisation : ${err.message}`, "error");
+      }
+    }
+
+    function exportOfflineQueueJson() {
+      const blob = new Blob([JSON.stringify(appState.offlineQueue, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `digirisk-risques-en-attente-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Exécute une requête HTTP brute via le proxy local ou en direct
+    async function executeRawRequest(fullUrl, method, headers, bodyObj) {
+      let status = 0;
+      let text = "";
+      if (appState.useLocalBackend) {
+        const proxyRes = await fetch("/local/proxy", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-DigiRisk-Local": "1" },
+          body: JSON.stringify({
+            url: fullUrl,
+            method: method,
+            headers: headers,
+            body: bodyObj !== null ? JSON.stringify(bodyObj) : null
+          })
+        });
+        status = proxyRes.status;
+        text = await proxyRes.text();
+      } else {
+        const res = await fetch(fullUrl, {
+          method,
+          headers,
+          body: bodyObj !== null ? JSON.stringify(bodyObj) : undefined
+        });
+        status = res.status;
+        text = await res.text();
+      }
+
+      const trimmed = (text || "").trim();
+      const isHtml = trimmed.toLowerCase().startsWith("<!doctype html") || trimmed.toLowerCase().startsWith("<html");
+      if (isHtml) {
+        const htmlErr = new Error(status === 404 ? "Route API introuvable (404 HTML)" : "Réponse HTML reçue au lieu de JSON");
+        htmlErr.isHtml = true;
+        htmlErr.status = status;
+        throw htmlErr;
+      }
+
+      let parsed = null;
+      try {
+        parsed = JSON.parse(trimmed);
+      } catch (_) {
+        const nonJsonErr = new Error(`Réponse non-JSON du serveur (HTTP ${status})`);
+        nonJsonErr.status = status;
+        nonJsonErr.isNonJson = true;
+        throw nonJsonErr;
+      }
+
+      if (status < 200 || status >= 300) {
+        const errMsg = (parsed && parsed.error && parsed.error.message) || (parsed && parsed.message) || `Erreur HTTP ${status}`;
+        const err = new Error(errMsg);
+        err.status = status;
+        throw err;
+      }
+      return parsed;
+    }
+
+    // Construit les URLs candidates d'API Dolibarr pour supporter aussi bien http://localhost/dolibarr23/ que http://localhost/dolibarr23/htdocs
+    function getCandidateApiBases(rawServerUrl) {
+      let baseUrl = (rawServerUrl || "").trim().replace(/\/+$/, "");
+      baseUrl = baseUrl.replace(/\/api\/index\.php$/i, "");
+      if (baseUrl.toLowerCase().endsWith("/htdocs")) {
+        const withoutHtdocs = baseUrl.replace(/\/htdocs$/i, "");
+        return [`${baseUrl}/api/index.php`, `${withoutHtdocs}/api/index.php`];
+      }
+      return [`${baseUrl}/api/index.php`, `${baseUrl}/htdocs/api/index.php`];
+    }
+
+    // Appel API vers Dolibarr/DigiRisk avec détection automatique de /api/index.php ou /htdocs/api/index.php
+    async function callDolibarrApi(endpointPath, method = "GET", bodyObj = null) {
+      let baseUrl = (appState.settings.serverUrl || "").trim();
+      if (!baseUrl) throw new Error("URL du serveur DigiRisk non configurée.");
+
+      const entityStr = String(appState.settings.entity || 1);
+      const headers = {
+        "Accept": "application/json",
+        "DOLAPIKEY": appState.settings.apiKey || "",
+        "DOLENTITY": entityStr,
+        "DOLAPIENTITY": entityStr
+      };
+      if (bodyObj !== null) {
+        headers["Content-Type"] = "application/json";
+      }
+
+      const cleanEndpoint = endpointPath.replace(/^\/+/, "");
+      const sep = cleanEndpoint.includes("?") ? "&" : "?";
+      const endpointWithEntity = `${cleanEndpoint}${sep}DOLENTITY=${encodeURIComponent(entityStr)}`;
+      const candidateBases = getCandidateApiBases(baseUrl);
+
+      let lastErr = null;
+      for (let i = 0; i < candidateBases.length; i++) {
+        const apiBase = candidateBases[i];
+        try {
+          const result = await executeRawRequest(`${apiBase}/${endpointWithEntity}`, method, headers, bodyObj);
+          appState.resolvedApiBase = apiBase;
+          return result;
+        } catch (err) {
+          // Si un serveur Dolibarr distant non patché renvoie 401 sur l'en-tête DOLAPIENTITY pour un SuperAdmin (entity=0),
+          // on réessaie automatiquement avec DOLENTITY seul (en-tête + query param).
+          if (err.status === 401 && Number(entityStr) > 1) {
+            try {
+              const fallbackHeaders = Object.assign({}, headers);
+              delete fallbackHeaders.DOLAPIENTITY;
+              const fallbackRes = await executeRawRequest(`${apiBase}/${endpointWithEntity}`, method, fallbackHeaders, bodyObj);
+              appState.resolvedApiBase = apiBase;
+              return fallbackRes;
+            } catch (retryErr) {
+              err = retryErr;
+            }
+          }
+          lastErr = err;
+          // Si le premier chemin (/api/index.php) renvoie une page HTML ou une 404 (cas de http://localhost/dolibarr23/),
+          // on teste automatiquement le second chemin (/htdocs/api/index.php) !
+          if (i < candidateBases.length - 1 && (err.isHtml || err.isNonJson || err.status === 404)) {
+            continue;
+          }
+          throw err;
+        }
+      }
+      throw lastErr || new Error("Impossible de joindre l'API Dolibarr.");
+    }
+
+    // Chargement des Unités de Travail (GP/UT), Catégories et Utilisateurs depuis DigiRisk
+    async function refreshServerOptions(silent = false) {
+      const badge = document.getElementById("connectionBadge");
+      const badgeText = document.getElementById("connectionText");
+      try {
+        // 1. Vérifier d'abord que l'API Dolibarr répond avec la clé API
+        await callDolibarrApi("status", "GET");
+        badge.classList.add("connected");
+        badgeText.textContent = "Connecté";
+
+        // 1.5. Charger dynamiquement la liste des entités MultiCompany (si l'utilisateur a les droits API multicompany)
+        try {
+          const mcList = await callDolibarrApi("multicompany?sortfield=t.rowid&sortorder=ASC&limit=100", "GET");
+          if (Array.isArray(mcList) && mcList.length > 0) {
+            const parsedEntities = mcList.map((ent) => ({
+              id: Number(ent.id || ent.rowid) || 1,
+              label: ent.label || ent.name || `Entité #${ent.id || ent.rowid}`
+            }));
+            appState.entities = parsedEntities;
+            const active = getActiveConnection();
+            if (active) {
+              active.entities = parsedEntities;
+              await persistSettingsAndQueue();
+            }
+            populateEntitiesSelect();
+          }
+        } catch (_) {
+          // Si /multicompany renvoie 401/403 (droits restreints), on conserve les entités configurées dans la session
+          populateEntitiesSelect();
+        }
+
+        // 2. Charger les options de création de risques DigiRisk (GP/UT + catégories) pour l'entité active
+        try {
+          const options = await callDolibarrApi("digiriskdolibarr/risks/creation-options", "GET");
+          if (options && Number(options.du_project_id) > 0) {
+            appState.settings.duProjectId = Number(options.du_project_id);
+            const active = getActiveConnection();
+            if (active) active.duProjectId = appState.settings.duProjectId;
+          }
+          if (options && Array.isArray(options.elements)) {
+            appState.elements = options.elements;
+            populateElementsSelect();
+          }
+          if (options && Array.isArray(options.categories) && options.categories.length > 0) {
+            appState.categories = options.categories;
+            renderDangerGrid();
+          }
+          await persistSettingsAndQueue();
+          if (!silent) showToast(`Entité #${appState.settings.entity} : ${appState.elements.length} UT/GP chargées !`, "success");
+        } catch (routeErr) {
+          populateElementsSelect(true);
+          if (!silent) {
+            showToast("Connecté à Dolibarr, mais ce serveur n'expose pas encore la route API DigiRisk /risks/creation-options (mets à jour le module DigiRisk sur ce serveur).", "error");
+          }
+        }
+
+        // 3. Récupération de la liste des collaborateurs pour le champ Responsable de la tâche
+        try {
+          const users = await callDolibarrApi("users?sortfield=t.rowid&sortorder=ASC&limit=200", "GET");
+          if (Array.isArray(users)) {
+            appState.users = users;
+            populateUsersSelect();
+          }
+        } catch (_) {}
+      } catch (err) {
+        badge.classList.remove("connected");
+        badgeText.textContent = "Hors-ligne / Erreur";
+        if (!silent) showToast(`Connexion impossible : ${err.message}`, "error");
+      }
+    }
+
+    function populateElementsSelect(routeMissing = false) {
+      const sel = document.getElementById("elementSelect");
+      sel.innerHTML = "";
+      if (appState.elements.length === 0) {
+        if (routeMissing) {
+          sel.innerHTML = `<option value="1">Unité par défaut (#1) — Route API /risks/creation-options absente sur ce serveur</option>`;
+        } else {
+          sel.innerHTML = `<option value="1">-- Aucune UT/GP trouvée dans l'entité #${appState.settings.entity || 1} --</option>`;
+        }
+        return;
+      }
+      const hasCurrentDefault = appState.elements.some((el) => Number(el.id) === Number(appState.settings.defaultElementId));
+      if (!hasCurrentDefault && appState.elements[0]) {
+        appState.settings.defaultElementId = Number(appState.elements[0].id);
+        const active = getActiveConnection();
+        if (active) active.defaultElementId = appState.settings.defaultElementId;
+      }
+      const elementsById = new Map();
+      appState.elements.forEach((el) => {
+        elementsById.set(Number(el.id), el);
+      });
+
+      const getElementDepth = (el) => {
+        let depth = 0;
+        let parentId = Number(el.fk_parent) || 0;
+        const visited = new Set([Number(el.id)]);
+        while (parentId > 0 && elementsById.has(parentId) && !visited.has(parentId) && depth < 12) {
+          visited.add(parentId);
+          depth++;
+          parentId = Number(elementsById.get(parentId).fk_parent) || 0;
+        }
+        return depth;
+      };
+
+      appState.elements.forEach((el) => {
+        const opt = document.createElement("option");
+        opt.value = el.id;
+        const depth = getElementDepth(el);
+        const indentPrefix = depth > 0 ? "\u00A0\u00A0\u00A0\u00A0".repeat(depth) + "└─ " : "";
+        const typePrefix = el.type === "groupment" ? "[GP]" : "[UT]";
+        opt.textContent = `${indentPrefix}${el.ref} - ${el.label} ${typePrefix}`;
+        opt.style.fontWeight = el.type === "groupment" ? "600" : "400";
+        if (Number(appState.settings.defaultElementId) === Number(el.id)) {
+          opt.selected = true;
+        }
+        sel.appendChild(opt);
+      });
+      sel.onchange = () => {
+        appState.settings.defaultElementId = Number(sel.value) || 0;
+        const active = getActiveConnection();
+        if (active) active.defaultElementId = appState.settings.defaultElementId;
+        persistSettingsAndQueue();
+        validateFormState();
+      };
+      validateFormState();
+    }
+
+    function populateUsersSelect() {
+      const sel = document.getElementById("taskExecutive");
+      sel.innerHTML = `<option value="0">Responsable</option>`;
+      appState.users.forEach((u) => {
+        const opt = document.createElement("option");
+        opt.value = u.id;
+        const fullName = [u.firstname, u.lastname].filter(Boolean).join(" ") || u.login;
+        opt.textContent = fullName;
+        sel.appendChild(opt);
+      });
+    }
+
+    // Rendu de la grille des pictogrammes de dangers DigiRisk
+    function renderDangerGrid() {
+      const grid = document.getElementById("dangerGrid");
+      grid.innerHTML = "";
+      appState.categories.forEach((cat) => {
+        const item = document.createElement("div");
+        item.className = "danger-item" + (appState.selectedCategory === Number(cat.position) ? " active" : "");
+        item.title = cat.name;
+        const imgPath = `img/categorieDangers/${cat.thumbnail_name}.png`;
+        item.innerHTML = `<img src="${imgPath}" alt="${cat.name}" loading="lazy" />`;
+        item.onclick = (e) => {
+          e.stopPropagation();
+          selectDangerCategory(Number(cat.position), cat.name, imgPath);
+        };
+        grid.appendChild(item);
+      });
+    }
+
+    function toggleDangerDropdown(e) {
+      e.stopPropagation();
+      document.getElementById("dangerDropdown").classList.toggle("open");
+    }
+
+    function selectDangerCategory(position, name, imgPath) {
+      appState.selectedCategory = position;
+      const btn = document.getElementById("dangerTriggerBtn");
+      const img = document.getElementById("selectedDangerImg");
+      const lbl = document.getElementById("selectedDangerLabel");
+
+      img.src = imgPath;
+      img.title = name;
+      btn.classList.add("has-selection");
+      lbl.textContent = name;
+      lbl.style.display = "block";
+
+      // Pré-remplir la description si vide
+      const descInput = document.getElementById("riskDescription");
+      if (!descInput.value.trim()) {
+        descInput.value = name;
+      }
+
+      document.getElementById("dangerDropdown").classList.remove("open");
+      renderDangerGrid();
+      validateFormState();
+    }
+
+    // Gestion de l'évaluation simple (standard) vs avancée (advanced)
+    function setEvaluationMethod(method) {
+      const normalized = method === "advanced" ? "advanced" : "standard";
+      appState.evaluationMethod = normalized;
+      document.getElementById("tabSimple").classList.toggle("active", normalized === "standard");
+      document.getElementById("tabAdvanced").classList.toggle("active", normalized === "advanced");
+      document.getElementById("advancedEvalPanel").classList.toggle("visible", normalized === "advanced");
+
+      const simpleCol = document.getElementById("simpleCotationCol");
+      const calcCol = document.getElementById("calculatedCotationCol");
+      if (simpleCol) simpleCol.style.display = normalized === "standard" ? "block" : "none";
+      if (calcCol) calcCol.style.display = normalized === "advanced" ? "block" : "none";
+
+      if (normalized === "advanced") {
+        recalculateAdvancedCotation();
+      } else {
+        // En mode standard (simple), la cotation doit être l'un des 4 seuils officiels (0, 48, 51, 100)
+        if (![0, 48, 51, 100].includes(Number(appState.selectedCotation))) {
+          appState.selectedCotation = null;
+          document.querySelectorAll("#simpleCotationCol .cot-box").forEach((b) => b.classList.remove("selected"));
+        }
+      }
+      validateFormState();
+    }
+
+    function selectSimpleCotation(score) {
+      appState.selectedCotation = Number(score);
+      document.querySelectorAll("#simpleCotationCol .cot-box").forEach((b) => {
+        b.classList.toggle("selected", Number(b.dataset.cotation) === Number(score));
+      });
+      validateFormState();
+    }
+
+    function renderAdvancedGrid() {
+      const container = document.getElementById("advancedCriteriaContainer");
+      container.innerHTML = "";
+
+      // Ligne d'en-tête 0 | 1 | 2 | 3 | 4 (identique à la table DigiRisk Dolibarr)
+      const headerRow = document.createElement("div");
+      headerRow.className = "adv-criterion-row";
+      const emptyHeader = document.createElement("div");
+      emptyHeader.className = "adv-criterion-name";
+      headerRow.appendChild(emptyHeader);
+      for (let level = 0; level <= 4; level++) {
+        const hCell = document.createElement("div");
+        hCell.style.textAlign = "center";
+        hCell.style.fontWeight = "700";
+        hCell.style.fontSize = "12px";
+        hCell.style.color = "#475569";
+        hCell.style.padding = "2px 0";
+        hCell.textContent = String(level);
+        headerRow.appendChild(hCell);
+      }
+      container.appendChild(headerRow);
+
+      ADVANCED_CRITERIA.forEach((crit) => {
+        const row = document.createElement("div");
+        row.className = "adv-criterion-row";
+        const labelDiv = document.createElement("div");
+        labelDiv.className = "adv-criterion-name";
+        labelDiv.textContent = crit.label;
+        row.appendChild(labelDiv);
+
+        crit.options.forEach((opt) => {
+          const cell = document.createElement("div");
+          if (opt.val === null) {
+            cell.className = "adv-choice disabled-cell";
+            cell.textContent = "";
+          } else {
+            const isSelected = appState.advancedValues[crit.key] === opt.val;
+            cell.className = "adv-choice" + (isSelected ? " active" : "");
+            cell.textContent = opt.text;
+            cell.onclick = () => {
+              appState.advancedValues[crit.key] = opt.val;
+              renderAdvancedGrid();
+              recalculateAdvancedCotation();
+            };
+          }
+          row.appendChild(cell);
+        });
+        container.appendChild(row);
+      });
+    }
+
+    function recalculateAdvancedCotation() {
+      const v = appState.advancedValues;
+      const product = (v.gravite ?? 0) * (v.exposition ?? 0) * (v.occurrence ?? 1) * (v.formation ?? 1) * (v.protection ?? 1);
+      const mapped = EVARISK_MATRIX[product] !== undefined ? EVARISK_MATRIX[product] : Math.min(100, product);
+      appState.selectedCotation = mapped;
+
+      // Échelle de couleur DigiRisk : 1 (0-47), 2 (48-50), 3 (51-80), 4 (81-100)
+      let scale = 1;
+      if (mapped >= 81) scale = 4;
+      else if (mapped >= 51) scale = 3;
+      else if (mapped >= 48) scale = 2;
+
+      const calcBadge = document.getElementById("calculatedCotationBadge");
+      if (calcBadge) {
+        calcBadge.textContent = String(mapped);
+        calcBadge.className = `cot-box scale-${scale} selected`;
+      }
+      validateFormState();
+    }
+
+    // Gestion Multi-Photos (Import multiple fichiers ou captures Webcam successives) avec redimensionnement < 5 Mo
+    function handlePhotoFileSelect(event) {
+      const files = event.target.files ? Array.from(event.target.files) : [];
+      if (files.length === 0) return;
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          compressAndAddPhoto(e.target.result, file.name);
+        };
+        reader.readAsDataURL(file);
+      });
+      // Réinitialiser l'input pour permettre de sélectionner à nouveau d'autres fichiers (ou les mêmes)
+      event.target.value = "";
+    }
+
+    function compressAndAddPhoto(dataUrl, filename) {
+      const img = new Image();
+      img.onload = () => {
+        const maxDim = 1920;
+        let w = img.width;
+        let h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+          else { w = Math.round((w * maxDim) / h); h = maxDim; }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        const compressed = canvas.toDataURL("image/jpeg", 0.85);
+
+        if (!Array.isArray(appState.photos)) appState.photos = [];
+        const hasFavorite = appState.photos.some((p) => p.isFavorite);
+        appState.photos.push({
+          id: "ph-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+          photo_base64: compressed,
+          filename: filename || `photo-${appState.photos.length + 1}.jpg`,
+          isFavorite: !hasFavorite
+        });
+
+        renderPhotosGallery();
+      };
+      img.src = dataUrl;
+    }
+
+    function renderPhotosGallery() {
+      const container = document.getElementById("photosGalleryList");
+      if (!container) return;
+      const photos = appState.photos || [];
+      container.innerHTML = "";
+      if (photos.length === 0) {
+        container.classList.remove("visible");
+        return;
+      }
+
+      container.classList.add("visible");
+      photos.forEach((p, idx) => {
+        const chip = document.createElement("div");
+        chip.className = "photo-preview-chip" + (p.isFavorite ? " is-favorite" : "");
+        chip.title = p.filename || "";
+        chip.innerHTML = `
+          <img src="${p.photo_base64}" alt="${escapeHtml(p.filename)}" title="${escapeHtml(p.filename)} — Cliquer pour définir comme photo principale" onclick="setFavoritePhoto(${idx})" />
+          <button type="button" class="photo-fav-btn" onclick="setFavoritePhoto(${idx})" title="${p.isFavorite ? "Photo principale de l'évaluation" : "Définir comme photo principale"} (${escapeHtml(p.filename)})">&#x2605;</button>
+          <button type="button" class="photo-preview-remove" onclick="removePhotoAt(${idx})" title="Retirer ${escapeHtml(p.filename)}">&#x2715;</button>
+        `;
+        container.appendChild(chip);
+      });
+
+      if (photos.length > 1) {
+        const clearBtn = document.createElement("button");
+        clearBtn.type = "button";
+        clearBtn.className = "photos-clear-all-btn";
+        clearBtn.textContent = `Tout vider (${photos.length})`;
+        clearBtn.onclick = clearSelectedPhoto;
+        container.appendChild(clearBtn);
+      }
+    }
+
+    function setFavoritePhoto(index) {
+      if (!Array.isArray(appState.photos) || !appState.photos[index]) return;
+      appState.photos.forEach((p, i) => {
+        p.isFavorite = i === index;
+      });
+      renderPhotosGallery();
+    }
+
+    function removePhotoAt(index) {
+      if (!Array.isArray(appState.photos) || !appState.photos[index]) return;
+      const wasFav = appState.photos[index].isFavorite;
+      appState.photos.splice(index, 1);
+      if (wasFav && appState.photos.length > 0) {
+        appState.photos[0].isFavorite = true;
+      }
+      renderPhotosGallery();
+    }
+
+    function clearSelectedPhoto() {
+      appState.photos = [];
+      const fileInput = document.getElementById("filePhotoInput");
+      if (fileInput) fileInput.value = "";
+      renderPhotosGallery();
+    }
+
+    async function openWebcamModal() {
+      const modal = document.getElementById("webcamModal");
+      const video = document.getElementById("webcamVideo");
+      try {
+        appState.webcamStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false
+        });
+        video.srcObject = appState.webcamStream;
+        modal.classList.add("open");
+      } catch (err) {
+        showToast("Caméra non détectée ou accès refusé. Sélectionnez vos images depuis vos fichiers.", "error");
+        document.getElementById("filePhotoInput").click();
+      }
+    }
+
+    function closeWebcamModal() {
+      if (appState.webcamStream) {
+        appState.webcamStream.getTracks().forEach((t) => t.stop());
+        appState.webcamStream = null;
+      }
+      document.getElementById("webcamModal").classList.remove("open");
+    }
+
+    function captureWebcamPhoto(closeAfter = true) {
+      const video = document.getElementById("webcamVideo");
+      const canvas = document.getElementById("webcamCanvas");
+      canvas.width = video.videoWidth || 1280;
+      canvas.height = video.videoHeight || 720;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.88);
+      compressAndAddPhoto(dataUrl, `capture-${Date.now()}.jpg`);
+      if (closeAfter) {
+        closeWebcamModal();
+      } else {
+        showToast("Photo ajoutée ! Vous pouvez en prendre une autre.", "success");
+      }
+    }
+
+    // Validation de l'état du bouton "+ Ajouter le risque"
+    function validateFormState() {
+      const hasCategory = appState.selectedCategory !== null;
+      const hasCotation = appState.selectedCotation !== null;
+      document.getElementById("btnSubmitRisk").disabled = !(hasCategory && hasCotation);
+    }
+
+    // Soumission complète : Risque + Multi-Photos + Cotation + Tâche
+    async function submitRiskForm() {
+      const btn = document.getElementById("btnSubmitRisk");
+      const fkElement = Number(document.getElementById("elementSelect").value) || Number(appState.settings.defaultElementId) || 1;
+      const description = document.getElementById("riskDescription").value.trim() ||
+        (appState.categories.find((c) => Number(c.position) === appState.selectedCategory)?.name || "Risque identifié");
+      const comment = document.getElementById("evalComment").value.trim();
+
+      const evalMethod = appState.evaluationMethod === "advanced" ? "advanced" : "standard";
+      const riskPayload = {
+        fk_element: fkElement,
+        category: Number(appState.selectedCategory),
+        description: description,
+        method: evalMethod,
+        cotation: Number(appState.selectedCotation),
+        comment: comment
+      };
+
+      // Placer la photo principale (favorite ★) en première position pour que DigiRisk l'affecte à $assessment->photo
+      if (Array.isArray(appState.photos) && appState.photos.length > 0) {
+        const orderedPhotos = [...appState.photos].sort((a, b) => (b.isFavorite ? 1 : 0) - (a.isFavorite ? 1 : 0));
+        riskPayload.photos = orderedPhotos.map((p) => ({
+          photo_base64: p.photo_base64,
+          filename: p.filename
+        }));
+      }
+
+      if (evalMethod === "advanced") {
+        Object.assign(riskPayload, {
+          gravite: Number(appState.advancedValues.gravite ?? 0),
+          exposition: Number(appState.advancedValues.exposition ?? 0),
+          occurrence: Number(appState.advancedValues.occurrence ?? 1),
+          formation: Number(appState.advancedValues.formation ?? 1),
+          protection: Number(appState.advancedValues.protection ?? 1)
+        });
+      }
+
+      // Données du bloc Tâche
+      const taskLabel = document.getElementById("taskLabel").value.trim();
+      const taskDateStartStr = document.getElementById("taskDateStart").value;
+      const taskDateEndStr = document.getElementById("taskDateEnd").value;
+      const taskExecutive = Number(document.getElementById("taskExecutive").value) || 0;
+      const taskBudget = document.getElementById("taskBudget").value ? Number(document.getElementById("taskBudget").value) : null;
+
+      const taskPayload = taskLabel ? {
+        label: taskLabel,
+        date_start: taskDateStartStr ? Math.floor(new Date(taskDateStartStr).getTime() / 1000) : Math.floor(Date.now() / 1000),
+        date_end: taskDateEndStr ? Math.floor(new Date(taskDateEndStr).getTime() / 1000) : null,
+        budget_amount: taskBudget,
+        executive_id: taskExecutive
+      } : null;
+
+      btn.disabled = true;
+      btn.innerHTML = `<span>Envoi en cours...</span>`;
+
+      try {
+        const result = await sendRiskAndTaskToServer(riskPayload, taskPayload);
+        const refText = result.risk_ref ? `${result.risk_ref} (${result.assessment_ref || ""})` : `#${result.id}`;
+        const nbPhotos = Array.isArray(riskPayload.photos) ? riskPayload.photos.length : 0;
+        document.getElementById("modalRiskTitle").textContent = `AJOUT DU RISQUE ${result.risk_ref || ""}`;
+        showToast(`Risque ${refText}${nbPhotos > 0 ? ` + ${nbPhotos} photo(s)` : ""}${taskPayload ? " + Tâche" : ""} créé avec succès !`, "success");
+        resetRiskForm();
+      } catch (err) {
+        // En cas d'absence de réseau ou d'erreur serveur, mise en file d'attente locale dans Data/settings/
+        appState.offlineQueue.push({
+          createdAt: new Date().toISOString(),
+          riskPayload,
+          taskPayload
+        });
+        await persistSettingsAndQueue();
+        showToast(`Serveur injoignable (${err.message}). Risque sauvegardé en local pour synchronisation !`, "error");
+        resetRiskForm();
+      } finally {
+        btn.innerHTML = `<span>&#xFF0B; Ajouter le risque</span>`;
+        validateFormState();
+      }
+    }
+
+    async function sendRiskAndTaskToServer(riskPayload, taskPayload) {
+      // Normaliser 'simple' -> 'standard' (nom officiel de la méthode dans llx_digiriskdolibarr_riskassessment)
+      const payloadToSend = Object.assign({}, riskPayload, {
+        method: riskPayload.method === "advanced" ? "advanced" : "standard"
+      });
+
+      let createdRisk = null;
+      let usedLegacySimpleAlias = false;
+
+      try {
+        createdRisk = await callDolibarrApi("digiriskdolibarr/risks/create-with-photo", "POST", payloadToSend);
+      } catch (err) {
+        // Compatibilité ascendante : si le serveur distant n'accepte encore que 'simple' dans create-with-photo,
+        // on crée avec 'simple' puis on corrige immédiatement method='standard' via PUT /riskassessments/{id}
+        if (payloadToSend.method === "standard" && err.status === 400 && /evaluation method/i.test(err.message || "")) {
+          const fallbackPayload = Object.assign({}, payloadToSend, { method: "simple" });
+          createdRisk = await callDolibarrApi("digiriskdolibarr/risks/create-with-photo", "POST", fallbackPayload);
+          usedLegacySimpleAlias = true;
+        } else {
+          throw err;
+        }
+      }
+
+      const riskId = createdRisk && (createdRisk.risk_id || createdRisk.id);
+      if (!riskId) {
+        throw new Error("La route API /digiriskdolibarr/risks/create-with-photo n'est pas disponible sur ce serveur.");
+      }
+
+      // S'assurer que l'évaluation créée en mode simple possède bien method='standard' en base de données Dolibarr
+      if (payloadToSend.method === "standard" && createdRisk.assessment_id && usedLegacySimpleAlias) {
+        try {
+          await callDolibarrApi(`digiriskdolibarr/riskassessments/${createdRisk.assessment_id}`, "PUT", {
+            method: "standard",
+            cotation: Number(payloadToSend.cotation)
+          });
+        } catch (patchErr) {
+          console.warn("Avertissement normalisation method='standard' :", patchErr);
+        }
+      }
+
+      if (taskPayload && riskId) {
+        const dolibarrTaskBody = {
+          ref: `TK-RK${riskId}-${Date.now().toString().slice(-4)}`,
+          label: taskPayload.label,
+          fk_project: Number(appState.settings.duProjectId) || 1,
+          date_start: taskPayload.date_start,
+          date_end: taskPayload.date_end,
+          budget_amount: taskPayload.budget_amount,
+          array_options: {
+            options_fk_risk: Number(riskId)
+          }
+        };
+        try {
+          await callDolibarrApi("tasks", "POST", dolibarrTaskBody);
+        } catch (taskErr) {
+          console.warn("Avertissement création tâche via /tasks :", taskErr);
+        }
+      }
+      return createdRisk;
+    }
+
+    async function syncOfflineQueue() {
+      if (appState.offlineQueue.length === 0) return;
+      const remaining = [];
+      let synced = 0;
+      let lastErrorMsg = "";
+      for (const item of appState.offlineQueue) {
+        try {
+          await sendRiskAndTaskToServer(item.riskPayload, item.taskPayload);
+          synced++;
+        } catch (e) {
+          item.lastError = e.message;
+          lastErrorMsg = e.message;
+          remaining.push(item);
+        }
+      }
+      appState.offlineQueue = remaining;
+      await persistSettingsAndQueue();
+      renderQueueList();
+      if (synced > 0) {
+        showToast(`${synced} risque(s) hors-ligne synchronisé(s) avec DigiRisk !`, "success");
+      } else {
+        showToast(`Impossible de synchroniser : ${lastErrorMsg || "Vérifiez la connexion."}`, "error");
+      }
+    }
+
+    function resetRiskForm() {
+      appState.selectedCategory = null;
+      appState.selectedCotation = null;
+      document.getElementById("dangerTriggerBtn").classList.remove("has-selection");
+      document.getElementById("selectedDangerImg").src = "";
+      document.getElementById("selectedDangerLabel").style.display = "none";
+      document.getElementById("riskDescription").value = "";
+      document.getElementById("evalComment").value = "";
+      document.getElementById("taskLabel").value = "";
+      document.getElementById("taskDateEnd").value = "";
+      document.getElementById("taskExecutive").value = "0";
+      document.getElementById("taskBudget").value = "";
+      initDefaultStartDate();
+      clearSelectedPhoto();
+      document.querySelectorAll(".cot-box").forEach((b) => b.classList.remove("selected"));
+      renderDangerGrid();
+      validateFormState();
+    }
+
+    // Gestion de la modale des Sessions & Connexions établies
+    function openSettingsModal() {
+      renderConnectionsList();
+      const active = getActiveConnection();
+      if (active) {
+        loadConnectionIntoForm(active.id);
+      } else {
+        prepareNewConnectionForm();
+      }
+      document.getElementById("settingsModal").classList.add("open");
+    }
+
+    function closeSettingsModal() {
+      document.getElementById("settingsModal").classList.remove("open");
+    }
+
+    function renderConnectionsList() {
+      const container = document.getElementById("connectionsListContainer");
+      if (!container) return;
+      const conns = appState.settings.connections || [];
+      if (conns.length === 0) {
+        container.innerHTML = `<div style="padding:12px;text-align:center;color:#64748b;font-size:12.5px;border:1px dashed #cbd5e1;border-radius:8px;">Aucune connexion enregistrée. Créez votre première session ci-dessous.</div>`;
+        return;
+      }
+
+      container.innerHTML = "";
+      conns.forEach((c) => {
+        const isActive = c.id === appState.settings.activeConnectionId;
+        const entitiesCount = Array.isArray(c.entities) ? c.entities.length : 1;
+        const activeEntLabel = (Array.isArray(c.entities) && c.entities.find((e) => Number(e.id) === Number(c.entity))?.label) || `Entité #${c.entity || 1}`;
+        const card = document.createElement("div");
+        card.className = "conn-card" + (isActive ? " active-conn" : "");
+        card.innerHTML = `
+          <div class="conn-card-info" onclick="selectAndConnectSession('${c.id}')">
+            <div class="conn-card-name">
+              <span>${escapeHtml(c.name || c.serverUrl)}</span>
+              ${isActive ? `<span style="background:#10b981;color:#fff;font-size:10px;padding:1px 7px;border-radius:99px;">Session active</span>` : ""}
+              <span style="background:#e2e8f0;color:#334155;font-size:10.5px;padding:1px 6px;border-radius:4px;">MC: ${escapeHtml(activeEntLabel)} (${entitiesCount})</span>
+            </div>
+            <div class="conn-card-sub">${escapeHtml(c.serverUrl)}</div>
+          </div>
+          <div class="conn-card-actions">
+            ${!isActive ? `<button type="button" class="btn-queue-small" onclick="selectAndConnectSession('${c.id}')">Utiliser</button>` : ""}
+            <button type="button" class="btn-queue-small" onclick="loadConnectionIntoForm('${c.id}')">&#x270E; Éditer</button>
+            <button type="button" class="btn-queue-small btn-queue-del" onclick="deleteSavedConnection('${c.id}')">&#x1F5D1;</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function prepareNewConnectionForm() {
+      document.getElementById("connFormTitle").textContent = "Nouvelle session DigiRisk";
+      document.getElementById("cfgSessionId").value = "";
+      document.getElementById("cfgSessionName").value = "";
+      document.getElementById("cfgServerUrl").value = "";
+      document.getElementById("cfgApiKey").value = "";
+      document.getElementById("cfgEntity").value = "1";
+      document.getElementById("cfgEntitiesList").value = "1:Evarisk";
+      document.getElementById("cfgProjectId").value = "1";
+    }
+
+    function loadConnectionIntoForm(connId) {
+      const c = (appState.settings.connections || []).find((x) => x.id === connId);
+      if (!c) return;
+      document.getElementById("connFormTitle").textContent = `Modifier la session : ${c.name || c.serverUrl}`;
+      document.getElementById("cfgSessionId").value = c.id;
+      document.getElementById("cfgSessionName").value = c.name || "";
+      document.getElementById("cfgServerUrl").value = c.serverUrl || "";
+      document.getElementById("cfgApiKey").value = c.apiKey || "";
+      document.getElementById("cfgEntity").value = c.entity || 1;
+      document.getElementById("cfgEntitiesList").value = formatEntitiesString(c.entities);
+      document.getElementById("cfgProjectId").value = c.duProjectId || 1;
+    }
+
+    async function selectAndConnectSession(connId) {
+      appState.settings.activeConnectionId = connId;
+      normalizeConnectionsInSettings();
+      await persistSettingsAndQueue();
+      renderConnectionsList();
+      loadConnectionIntoForm(connId);
+      await refreshServerOptions(false);
+    }
+
+    async function deleteSavedConnection(connId) {
+      appState.settings.connections = (appState.settings.connections || []).filter((x) => x.id !== connId);
+      if (appState.settings.activeConnectionId === connId) {
+        appState.settings.activeConnectionId = appState.settings.connections[0]?.id || "";
+      }
+      normalizeConnectionsInSettings();
+      await persistSettingsAndQueue();
+      renderConnectionsList();
+      if (appState.settings.connections.length === 0) {
+        prepareNewConnectionForm();
+      }
+    }
+
+    async function testInstallationEndpoints() {
+      const box = document.getElementById("installCheckResult");
+      const rawUrl = document.getElementById("cfgServerUrl").value.trim();
+      const apiKey = document.getElementById("cfgApiKey").value.trim();
+      const entity = Number(document.getElementById("cfgEntity").value) || 1;
+
+      if (!rawUrl) {
+        showToast("Veuillez saisir l'URL du serveur à tester.", "error");
+        return;
+      }
+
+      box.style.display = "block";
+      box.innerHTML = `&#x23F3; Test des chemins d'installation sur <strong>${escapeHtml(rawUrl)}</strong>...`;
+
+      const candidates = getCandidateApiBases(rawUrl);
+      const headers = {
+        "Accept": "application/json",
+        "DOLAPIKEY": apiKey,
+        "DOLENTITY": String(entity)
+      };
+
+      const lines = [];
+      let detectedGoodBase = null;
+
+      for (const apiBase of candidates) {
+        try {
+          const st = await executeRawRequest(`${apiBase}/status`, "GET", headers, null);
+          const dolVer = (st && st.success && st.success.dolibarr_version) || "OK";
+          let digiriskInfo = "";
+          try {
+            const opts = await executeRawRequest(`${apiBase}/digiriskdolibarr/risks/creation-options`, "GET", headers, null);
+            const nbEl = opts && Array.isArray(opts.elements) ? opts.elements.length : 0;
+            digiriskInfo = ` &bull; <span style="color:#047857;font-weight:700;">API DigiRisk OK (${nbEl} UT/GP)</span>`;
+          } catch (drErr) {
+            digiriskInfo = ` &bull; <span style="color:#b45309;">Route DigiRisk /risks/creation-options : ${escapeHtml(drErr.message)}</span>`;
+          }
+          lines.push(`<div>&#x2705; <code>${escapeHtml(apiBase)}</code> : <strong>Dolibarr ${escapeHtml(dolVer)}</strong>${digiriskInfo}</div>`);
+          if (!detectedGoodBase) detectedGoodBase = apiBase.replace(/\/api\/index\.php$/i, "");
+        } catch (err) {
+          if (err.status === 401 && !err.isHtml) {
+            lines.push(`<div>&#x1F512; <code>${escapeHtml(apiBase)}</code> : <strong>Endpoint API Dolibarr détecté</strong> (HTTP 401 : renseignez ou récupérez la clé API).</div>`);
+            if (!detectedGoodBase) detectedGoodBase = apiBase.replace(/\/api\/index\.php$/i, "");
+          } else {
+            lines.push(`<div style="color:#64748b;">&#x274C; <code>${escapeHtml(apiBase)}</code> : ${escapeHtml(err.message)}</div>`);
+          }
+        }
+      }
+
+      if (detectedGoodBase) {
+        lines.push(`<div style="margin-top:6px;padding-top:6px;border-top:1px dashed #cbd5e1;color:#0f172a;">&#x1F3AF; <strong>Racine retenue automatiquement :</strong> <code>${escapeHtml(detectedGoodBase)}</code></div>`);
+      }
+
+      box.innerHTML = lines.join("");
+    }
+
+    async function fetchApiKeyFromLogin() {
+      const serverUrl = document.getElementById("cfgServerUrl").value.trim().replace(/\/+$/, "");
+      const login = document.getElementById("cfgLogin").value.trim();
+      const password = document.getElementById("cfgPassword").value;
+      if (!serverUrl || !login || !password) {
+        showToast("Renseignez l'URL du serveur, l'identifiant et le mot de passe.", "error");
+        return;
+      }
+      appState.settings.serverUrl = serverUrl;
+      try {
+        const res = await callDolibarrApi(`login?login=${encodeURIComponent(login)}&password=${encodeURIComponent(password)}`, "GET");
+        const token = res && res.success && res.success.token;
+        if (token) {
+          document.getElementById("cfgApiKey").value = token;
+          showToast("Clé API récupérée avec succès !", "success");
+        } else {
+          showToast("Identifiants valides mais aucune clé retournée.", "error");
+        }
+      } catch (err) {
+        showToast(`Échec de connexion : ${err.message}`, "error");
+      }
+    }
+
+    async function saveAndTestConnection() {
+      const serverUrl = document.getElementById("cfgServerUrl").value.trim().replace(/\/+$/, "");
+      const apiKey = document.getElementById("cfgApiKey").value.trim();
+      if (!serverUrl || !apiKey) {
+        showToast("Veuillez renseigner l'URL du serveur et la clé API.", "error");
+        return;
+      }
+
+      let name = document.getElementById("cfgSessionName").value.trim();
+      if (!name) {
+        try { name = new URL(serverUrl).hostname; } catch (_) { name = serverUrl; }
+      }
+
+      const entity = Number(document.getElementById("cfgEntity").value) || 1;
+      const entities = parseEntitiesString(document.getElementById("cfgEntitiesList").value, entity);
+      const duProjectId = Number(document.getElementById("cfgProjectId").value) || 1;
+      let sessionId = document.getElementById("cfgSessionId").value.trim();
+
+      if (!Array.isArray(appState.settings.connections)) {
+        appState.settings.connections = [];
+      }
+
+      const existingIdx = appState.settings.connections.findIndex((x) => x.id === sessionId);
+      if (existingIdx >= 0) {
+        appState.settings.connections[existingIdx] = Object.assign(appState.settings.connections[existingIdx], {
+          name,
+          serverUrl,
+          apiKey,
+          entity,
+          entities,
+          duProjectId,
+          lastConnectedAt: new Date().toISOString()
+        });
+      } else {
+        sessionId = "conn-" + Date.now();
+        appState.settings.connections.push({
+          id: sessionId,
+          name,
+          serverUrl,
+          apiKey,
+          entity,
+          entities,
+          duProjectId,
+          defaultElementId: 0,
+          lastConnectedAt: new Date().toISOString()
+        });
+      }
+
+      appState.settings.activeConnectionId = sessionId;
+      normalizeConnectionsInSettings();
+      await persistSettingsAndQueue();
+      renderConnectionsList();
+      closeSettingsModal();
+      await refreshServerOptions(false);
+    }
+  </script>
+</body>
+</html>

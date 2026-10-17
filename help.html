@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DigiRisk Portable — Documentation &amp; Liens Officiels</title>
+  <link rel="icon" href="App/DigiRisk/img/logo.png" />
+  <style>
+    :root {
+      --primary: #0d8aff;
+      --primary-dark: #0066cc;
+      --bg-page: #f4f7fb;
+      --card-bg: #ffffff;
+      --text-main: #1b2432;
+      --text-muted: #5a6578;
+      --border: #e2e8f0;
+      --accent-green: #10b981;
+      --accent-orange: #f5911e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 32px 16px 60px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* En-tête avec Logo DigiRisk et bouton d'accès rapide */
+    .hero-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.18);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .hero-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .hero-logo {
+      width: 76px;
+      height: 76px;
+      border-radius: 16px;
+      background: #ffffff;
+      padding: 8px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .hero-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge-version {
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(13, 138, 255, 0.25);
+      color: #60a5fa;
+      border: 1px solid rgba(96, 165, 250, 0.35);
+      padding: 2px 10px;
+      border-radius: 999px;
+    }
+
+    .hero-subtitle {
+      font-size: 14.5px;
+      color: #cbd5e1;
+      max-width: 500px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 210px;
+    }
+
+    .btn-launch {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 6px 16px rgba(13, 138, 255, 0.35);
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    .btn-launch:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-linktree {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #43e660;
+      color: #052e16;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13.5px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .btn-linktree:hover {
+      opacity: 0.94;
+      transform: translateY(-1px);
+    }
+
+    /* Grille de cartes */
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .steps-list {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #f8fafc;
+      border: 1px solid #edf2f7;
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    code {
+      background: #e2e8f0;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-size: 12.5px;
+      font-family: Consolas, Monaco, monospace;
+    }
+
+    .cot-pill {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      margin: 0 2px;
+    }
+    .cot-1 { background: #ececec; color: #222; }
+    .cot-2 { background: #f0ad4e; color: #fff; }
+    .cot-3 { background: #e05353; color: #fff; }
+    .cot-4 { background: #2b2b2b; color: #fff; }
+
+    /* Grille de liens officiels DigiRisk */
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .link-card {
+      display: flex;
+      flex-direction: column;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.15s;
+    }
+
+    .link-card:hover {
+      border-color: var(--primary);
+      background: #eff6ff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(13, 138, 255, 0.1);
+    }
+
+    .link-card-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--primary-dark);
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .link-card-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 24px;
+    }
+
+    .footer a {
+      color: var(--primary-dark);
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- EN-TÊTE HERO AVEC LOGO DIGIRISK -->
+    <div class="hero-card">
+      <div class="hero-left">
+        <img src="App/DigiRisk/img/logo.png" alt="Logo DigiRisk" class="hero-logo" />
+        <div>
+          <div class="hero-title">
+            <span>DigiRisk Portable</span>
+            <span class="badge-version">PortableApps.com</span>
+          </div>
+          <p class="hero-subtitle">
+            Gérez les risques de votre entreprise et alimentez votre Document Unique (DUERP) sur <strong>Dolibarr</strong> en toute simplicité, sans installation ni droits administrateur.
+          </p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <a href="App/DigiRisk/index.html" class="btn-launch">
+          <span>&#x25B6; Ouvrir l'application Web</span>
+        </a>
+        <a href="https://linktr.ee/DigiRisk" target="_blank" rel="noopener" class="btn-linktree">
+          <span>&#x1F333; Linktree DigiRisk</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- GUIDE D'UTILISATION RAPIDE -->
+    <div class="section-card">
+      <h2 class="section-title">&#x1F680; Utilisation rapide</h2>
+      <ul class="steps-list">
+        <li class="step-item">
+          <span class="step-num">1</span>
+          <div>
+            <strong>Lancement sans droits admin :</strong> Démarrez <code>DigiRiskPortable.exe</code> depuis le menu <strong>PortableApps.com</strong> (qui active automatiquement le proxy local anti-CORS), ou cliquez sur <strong>Ouvrir l'application Web</strong> ci-dessus (<code>App\DigiRisk\index.html</code>).
+          </div>
+        </li>
+        <li class="step-item">
+          <span class="step-num">2</span>
+          <div>
+            <strong>Connexion au serveur DigiRisk :</strong> Cliquez sur <strong>&#x2699; Connexion</strong> en haut à droite pour saisir l'URL de votre Dolibarr et votre clé API (ou récupérez-la en 1 clic avec votre identifiant et mot de passe Dolibarr). Vous pouvez tester directement sur la démo : <code>https://demodoli.digirisk.com</code> (ID : <code>demo</code> / Mot de passe : <code>demo</code>).
+          </div>
+        </li>
+        <li class="step-item">
+          <span class="step-num">3</span>
+          <div>
+            <strong>Sélection du lieu :</strong> Choisissez l'<strong>Unité de Travail (UT)</strong> ou le <strong>Groupement (GP)</strong> dans le menu déroulant en haut de la fenêtre.
+          </div>
+        </li>
+        <li class="step-item">
+          <span class="step-num">4</span>
+          <div>
+            <strong>Ajout du risque, photo, cotation &amp; tâche :</strong> Sélectionnez le pictogramme de danger, décrivez le risque, prenez ou importez une photo, choisissez la cotation (<span class="cot-pill cot-1">0-47</span> <span class="cot-pill cot-2">48-50</span> <span class="cot-pill cot-3">51-80</span> <span class="cot-pill cot-4">81-100</span> ou <em>Évaluation avancée</em>) et renseignez le bloc <strong>Tâche</strong> (libellé, dates, responsable, budget €).
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- TOUS LES LIENS OFFICIELS DIGIRISK & EVARISK -->
+    <div class="section-card">
+      <h2 class="section-title">&#x1F517; Écosystème &amp; Liens Officiels DigiRisk</h2>
+      <div class="links-grid">
+        <a href="https://linktr.ee/DigiRisk" target="_blank" rel="noopener" class="link-card">
+          <div class="link-card-title"><span>Linktree DigiRisk</span> <span>&#x2197;</span></div>
+          <div class="link-card-desc">Le récapitulatif officiel avec tous les liens utiles autour de DigiRisk.</div>
+        </a>
+
+        <a href="https://evarisk.com" target="_blank" rel="noopener" class="link-card">
+          <div class="link-card-title"><span>Site Officiel Evarisk</span> <span>&#x2197;</span></div>
+          <div class="link-card-desc">Découvrez l'éditeur Evarisk et les solutions Santé &amp; Sécurité au travail.</div>
+        </a>
+
+        <a href="https://demodoli.digirisk.com" target="_blank" rel="noopener" class="link-card">
+          <div class="link-card-title"><span>Démo en ligne DigiRisk</span> <span>&#x2197;</span></div>
+          <div class="link-card-desc">Instance de démonstration Dolibarr + DigiRisk (Identifiants : demo / demo).</div>
+        </a>
+
+        <a href="https://github.com/Evarisk/Digirisk" target="_blank" rel="noopener" class="link-card">
+          <div class="link-card-title"><span>GitHub DigiRisk Dolibarr</span> <span>&#x2197;</span></div>
+          <div class="link-card-desc">Code source officiel du module DigiRisk pour Dolibarr ERP CRM (GPLv3).</div>
+        </a>
+
+        <a href="https://github.com/Evarisk/digirisk-portable" target="_blank" rel="noopener" class="link-card">
+          <div class="link-card-title"><span>GitHub DigiRisk Portable</span> <span>&#x2197;</span></div>
+          <div class="link-card-desc">Dépôt officiel de la version PortableApps.com de DigiRisk.</div>
+        </a>
+
+        <a href="https://wiki.dolibarr.org/index.php/Module_DigiriskDolibarr" target="_blank" rel="noopener" class="link-card">
+          <div class="link-card-title"><span>Documentation Wiki</span> <span>&#x2197;</span></div>
+          <div class="link-card-desc">Guide complet d'installation, de configuration et d'utilisation sur le Wiki Dolibarr.</div>
+        </a>
+
+        <a href="https://dolibarr.fr/forum/t/module-digirisk-document-unique/37119" target="_blank" rel="noopener" class="link-card">
+          <div class="link-card-title"><span>Forum &amp; Entraide</span> <span>&#x2197;</span></div>
+          <div class="link-card-desc">Échangez avec la communauté et l'équipe sur le fil dédié du forum dolibarr.fr.</div>
+        </a>
+
+        <a href="https://dolistore.com" target="_blank" rel="noopener" class="link-card">
+          <div class="link-card-title"><span>DoliStore Evarisk</span> <span>&#x2197;</span></div>
+          <div class="link-card-desc">Retrouvez DigiRisk, Saturne, DigiQuali, DoliMeet, DoliSecu et DoliSIRH.</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer">
+      Édité par <a href="https://evarisk.com" target="_blank" rel="noopener">Evarisk</a> &bull; Licence Open Source GPLv3 &bull; Support : <a href="mailto:technique@evarisk.com">technique@evarisk.com</a>
+    </div>
+  </div>
+
+</body>
+</html>
