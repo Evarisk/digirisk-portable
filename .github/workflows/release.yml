@@ -1,0 +1,155 @@
+name: Build & Release DigiRiskPortable
+
+on:
+  push:
+    tags:
+      - "v*"
+      - "[0-9]*.[0-9]*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version à compiler (ex: 1.1.0)"
+        required: false
+        default: "1.1.0"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Compile DigiRiskPortable.exe & Package PAF 3.9
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine version from Git tag or input
+        id: meta
+        shell: pwsh
+        run: |
+          if ("${{ github.event_name }}" -eq "workflow_dispatch" -and "${{ inputs.version }}") {
+            $rawTag = "${{ inputs.version }}"
+          } else {
+            $rawTag = "${{ github.ref_name }}"
+          }
+          $cleanVer = $rawTag -replace '^[vV]', ''
+          if ($cleanVer -notmatch '^\d+\.\d+\.\d+') {
+            $cleanVer = "1.0.0"
+          }
+          $parts = $cleanVer.Split('-')[0].Split('.')
+          while ($parts.Count -lt 4) { $parts += "0" }
+          $fourPartVer = ($parts[0..3] -join '.')
+          $displayVer = ($parts[0..2] -join '.')
+
+          "tag=$rawTag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "version=$displayVer" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "package_version=$fourPartVer" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          Write-Host "Tag: $rawTag | DisplayVersion: $displayVer | PackageVersion: $fourPartVer"
+
+      - name: Inject version into appinfo.ini & Launcher.cs
+        shell: pwsh
+        run: |
+          $displayVer = "${{ steps.meta.outputs.version }}"
+          $pkgVer = "${{ steps.meta.outputs.package_version }}"
+
+          if (Test-Path "App\AppInfo\appinfo.ini") {
+            $ini = Get-Content "App\AppInfo\appinfo.ini" -Raw -Encoding UTF8
+            $ini = $ini -replace '(?m)^PackageVersion=.*$', "PackageVersion=$pkgVer"
+            $ini = $ini -replace '(?m)^DisplayVersion=.*$', "DisplayVersion=$displayVer"
+            Set-Content -Path "App\AppInfo\appinfo.ini" -Value $ini -Encoding UTF8 -NoNewline
+          }
+
+          if (Test-Path "Other\Source\Launcher.cs") {
+            $cs = Get-Content "Other\Source\Launcher.cs" -Raw -Encoding UTF8
+            $cs = $cs -replace 'AssemblyVersion\("[^"]+"\)', "AssemblyVersion(`"$pkgVer`")"
+            $cs = $cs -replace 'AssemblyFileVersion\("[^"]+"\)', "AssemblyFileVersion(`"$pkgVer`")"
+            Set-Content -Path "Other\Source\Launcher.cs" -Value $cs -Encoding UTF8 -NoNewline
+          }
+
+      - name: Compile DigiRiskPortable.exe with .NET Framework csc.exe
+        shell: pwsh
+        run: |
+          $csc = "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe"
+          if (-not (Test-Path $csc)) {
+            throw "Compilateur C# introuvable : $csc"
+          }
+
+          & $csc /nologo /target:winexe /optimize+ `
+            /win32icon:App\AppInfo\appicon.ico `
+            /r:System.dll `
+            /r:System.Core.dll `
+            /r:System.Drawing.dll `
+            /r:System.Security.dll `
+            /r:System.Windows.Forms.dll `
+            /out:DigiRiskPortable.exe `
+            Other\Source\Launcher.cs
+
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path "DigiRiskPortable.exe")) {
+            throw "Échec de la compilation de DigiRiskPortable.exe"
+          }
+
+          Copy-Item -Path "DigiRiskPortable.exe" -Destination "App\DigiRisk\DigiRiskApp.exe" -Force
+          Get-Item "DigiRiskPortable.exe", "App\DigiRisk\DigiRiskApp.exe" | Select-Object FullName, Length
+
+      - name: Package PortableApps archive (ZIP) & SHA256 checksums
+        id: pkg
+        shell: pwsh
+        run: |
+          $ver = "${{ steps.meta.outputs.version }}"
+          $zipName = "DigiRiskPortable_${ver}.zip"
+          $stageDir = Join-Path $env:RUNNER_TEMP "DigiRiskPortable_Stage\DigiRiskPortable"
+
+          New-Item -ItemType Directory -Force -Path $stageDir | Out-Null
+          Copy-Item -Path "DigiRiskPortable.exe" -Destination $stageDir -Force
+          Copy-Item -Path "help.html" -Destination $stageDir -Force
+          if (Test-Path "README.md") {
+            Copy-Item -Path "README.md" -Destination $stageDir -Force
+          }
+          Copy-Item -Path "App" -Destination (Join-Path $stageDir "App") -Recurse -Force
+          Copy-Item -Path "Other" -Destination (Join-Path $stageDir "Other") -Recurse -Force
+
+          Compress-Archive -Path $stageDir -DestinationPath $zipName -Force
+
+          $hashes = @()
+          foreach ($f in @("DigiRiskPortable.exe", $zipName)) {
+            $h = (Get-FileHash -Path $f -Algorithm SHA256).Hash.ToLower()
+            $hashes += "$h  $f"
+          }
+          $hashes | Set-Content -Path "SHA256SUMS.txt" -Encoding UTF8
+
+          "zip_name=$zipName" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          Get-Content "SHA256SUMS.txt"
+
+      - name: Upload build artifacts to GitHub Actions run
+        uses: actions/upload-artifact@v4
+        with:
+          name: DigiRiskPortable-${{ steps.meta.outputs.version }}
+          path: |
+            DigiRiskPortable.exe
+            ${{ steps.pkg.outputs.zip_name }}
+            SHA256SUMS.txt
+          if-no-files-found: error
+
+      - name: Publish GitHub Release on Tag
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          $tag = "${{ steps.meta.outputs.tag }}"
+          $ver = "${{ steps.meta.outputs.version }}"
+          $zipName = "${{ steps.pkg.outputs.zip_name }}"
+
+          gh release view $tag >$null 2>&1
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "Release $tag existe déjà, téléversement des binaires..."
+            gh release upload $tag "DigiRiskPortable.exe" $zipName "SHA256SUMS.txt" --clobber
+          } else {
+            Write-Host "Création de la Release GitHub $tag..."
+            gh release create $tag "DigiRiskPortable.exe" $zipName "SHA256SUMS.txt" `
+              --title "DigiRisk Portable v$ver" `
+              --generate-notes
+          }
