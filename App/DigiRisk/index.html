@@ -886,6 +886,15 @@
       transition: all 0.2s ease;
     }
 
+    .risk-step-circle.risk-step-rect {
+      width: auto;
+      min-width: 44px;
+      height: 26px;
+      padding: 0 7px;
+      border-radius: 7px;
+      gap: 3px;
+    }
+
     .risk-step-item:hover .risk-step-circle {
       transform: scale(1.08);
     }
@@ -2169,6 +2178,24 @@
       align-items: center;
       justify-content: space-between;
     }
+
+    .btn-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2.2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: digirisk-spin 0.65s linear infinite;
+      vertical-align: -2px;
+      margin-right: 6px;
+    }
+
+    @keyframes digirisk-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 <body>
@@ -2303,10 +2330,15 @@
       <!-- Barre de progression Risque | Description | Évaluation | Action -->
       <div id="riskStepperBar" class="risk-stepper-bar">
         <div id="stepItemRisk" class="risk-step-item active" onclick="toggleDangerDropdown(event)" title="Étape 1 : Cliquer pour choisir la catégorie de risque (obligatoire)">
-          <div id="stepCircleRisk" class="risk-step-circle">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
+          <div id="stepCircleRisk" class="risk-step-circle risk-step-rect">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="4" x2="12" y2="20"></line>
+              <line x1="4" y1="12" x2="20" y2="12"></line>
             </svg>
           </div>
           <div class="risk-step-title">Risque<span class="req-star">*</span></div>
@@ -2356,7 +2388,12 @@
             <img id="selectedDangerImg" src="" alt="Catégorie sélectionnée" />
           </span>
           <span id="submitBtnCotationChip" class="submit-cotation-chip"></span>
-          <span id="submitBtnPlusText" class="submit-plus-icon">&#xFF0B;</span>
+          <span id="submitBtnPlusText" class="submit-plus-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="4" x2="12" y2="20"></line>
+              <line x1="4" y1="12" x2="20" y2="12"></line>
+            </svg>
+          </span>
         </button>
         <button type="button" class="btn-reset-form" title="Réinitialiser le formulaire" onclick="resetRiskForm()">&#x2715;</button>
       </div>
@@ -2459,10 +2496,10 @@
 
     <hr class="section-divider" />
 
-    <!-- LIGNE 3 : LE BLOC TÂCHE -->
+    <!-- LIGNE 3 : LE BLOC ACTION -->
     <div class="task-block">
       <div class="task-header-row">
-        <label class="task-title-label" for="taskLabel">Tâche</label>
+        <label class="task-title-label" for="taskLabel">Action</label>
         <input type="text" id="taskLabel" class="task-label-input" placeholder="Libellé" oninput="updateRiskProgressStepper()" />
       </div>
 
@@ -2721,16 +2758,96 @@
       { position: 20, name: "Risques liés aux pratiques addictives", thumbnail_name: "pratiques_addictives_PictoCategorie_v2" },
       { position: 21, name: "Risques liés à l'amiante", thumbnail_name: "amiante_v2" },
       { position: 31, name: "Risques autres", thumbnail_name: "autre_PictoCategorie_v2" },
-      { position: 18, name: "Risques liés aux vibrations", thumbnail_name: "picto_risk_vibration_48px" },
-      { position: 22, name: "Risques liés aux postures pénibles", thumbnail_name: "picto_risk_strenuous-posture_48px-2" },
-      { position: 23, name: "Risques liés aux activités exercées en milieu hyperbare", thumbnail_name: "Pictogrammes_risk_hyperbar_48_px" },
-      { position: 24, name: "Risques liés au travail de nuit", thumbnail_name: "picto_risk_night-work_48_px" },
-      { position: 25, name: "Risques liés au travail en équipes successives alternantes", thumbnail_name: "picto_risk_rotating-shift-team_48_px-2" },
-      { position: 26, name: "Risques liés au travail répétitif", thumbnail_name: "picto_repetitive-work_48_px" },
-      { position: 27, name: "Agents chimiques dangereux (ACD)", thumbnail_name: "picto_risk_acd_48px" },
-      { position: 28, name: "Manutentions manuelles de charges", thumbnail_name: "picto_risk_heavy-load_48px" },
-      { position: 29, name: "Températures extrêmes", thumbnail_name: "picto_risk_extreme-temperature_48px" },
-      { position: 30, name: "Bruit (Pénibilité)", thumbnail_name: "picto_risk_noise_48px" }
+      {
+        position: 18,
+        name: "Risques liés aux vibrations",
+        thumbnail_name: "picto_risk_vibration_48px",
+        reference: "L.4161-1",
+        c2p: "NON",
+        criteres: "Mains-bras / corps entier",
+        seuil: "Pas de seuil C2P réglementaire actuel (A(8) en m/s², durée)"
+      },
+      {
+        position: 22,
+        name: "Risques liés aux postures pénibles",
+        thumbnail_name: "picto_risk_strenuous-posture_48px-2",
+        reference: "L.4161-1",
+        c2p: "NON",
+        criteres: "Positions forcées des articulations",
+        seuil: "Pas de seuil C2P réglementaire actuel (posture, durée, fréquence)"
+      },
+      {
+        position: 23,
+        name: "Risques liés aux activités exercées en milieu hyperbare",
+        thumbnail_name: "Pictogrammes_risk_hyperbar_48_px",
+        reference: "L.4161-1",
+        c2p: "OUI",
+        criteres: "Pression ≥ 1 200 hPa",
+        seuil: "60 interventions ou travaux/an"
+      },
+      {
+        position: 24,
+        name: "Risques liés au travail de nuit",
+        thumbnail_name: "picto_risk_night-work_48_px",
+        reference: "L.4161-1",
+        c2p: "OUI",
+        criteres: "≥ 1 h entre 00 h et 5 h",
+        seuil: "100 nuits/an"
+      },
+      {
+        position: 25,
+        name: "Risques liés au travail en équipes successives alternantes",
+        thumbnail_name: "picto_risk_rotating-shift-team_48_px-2",
+        reference: "L.4161-1",
+        c2p: "OUI",
+        criteres: "Alternance comportant ≥ 1 h entre 00 h et 5 h",
+        seuil: "30 nuits/an"
+      },
+      {
+        position: 26,
+        name: "Risques liés au travail répétitif",
+        thumbnail_name: "picto_repetitive-work_48_px",
+        reference: "L.4161-1",
+        c2p: "OUI",
+        criteres: "Cycle ≤ 30 s : ≥ 15 actions techniques/cycle\nCycle > 30 s, variable ou sans cycle : ≥ 30 actions techniques/min",
+        seuil: "900 h/an"
+      },
+      {
+        position: 27,
+        name: "Agents chimiques dangereux (ACD)",
+        thumbnail_name: "picto_risk_acd_48px",
+        reference: "L.4161-1",
+        c2p: "NON",
+        criteres: "ACD, poussières et fumées",
+        seuil: "Pas de seuil C2P réglementaire actuel (agent, classification CLP, voie, durée, mesures de prévention)"
+      },
+      {
+        position: 28,
+        name: "Manutentions manuelles de charges",
+        thumbnail_name: "picto_risk_heavy-load_48px",
+        reference: "L.4161-1",
+        c2p: "NON",
+        criteres: "Port, levage, poussée, traction, déplacement de charges",
+        seuil: "Pas de seuil C2P réglementaire actuel (kg, fréquence, durée, type de manutention)"
+      },
+      {
+        position: 29,
+        name: "Températures extrêmes",
+        thumbnail_name: "picto_risk_extreme-temperature_48px",
+        reference: "L.4161-1",
+        c2p: "OUI",
+        criteres: "T° ≤ 5 °C ou ≥ 30 °C",
+        seuil: "900 h/an"
+      },
+      {
+        position: 30,
+        name: "Bruit",
+        thumbnail_name: "picto_risk_noise_48px",
+        reference: "L.4161-1",
+        c2p: "OUI",
+        criteres: "LEX,8h ≥ 81 dB(A) ou Lp,C,peak ≥ 135 dB(C)",
+        seuil: "600 h/an ou 120 fois/an"
+      }
     ];
 
     // Matrice officielle Evarisk pour l'évaluation avancée
@@ -3222,7 +3339,13 @@
       }
 
       if (errBox) errBox.style.display = "none";
-      if (submitBtn) submitBtn.disabled = true;
+      const originalBtnHtml = submitBtn ? submitBtn.innerHTML : "";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = mode === "setup"
+          ? `<span class="btn-spinner"></span> Chiffrement en cours...`
+          : `<span class="btn-spinner"></span> Déverrouillage...`;
+      }
 
       try {
         const res = await fetch("/local/vault", {
@@ -3245,6 +3368,16 @@
         updateVaultButtonUI();
 
         const cb = appState.pendingAfterVaultUnlock;
+        if (submitBtn && (typeof cb === "function" || (appState.settings.serverUrl && appState.settings.apiKey))) {
+          submitBtn.innerHTML = `<span class="btn-spinner"></span> Connexion à DigiRisk...`;
+        }
+
+        if (typeof cb === "function") {
+          await cb();
+        } else if (appState.settings.serverUrl && appState.settings.apiKey) {
+          await refreshServerOptions(false);
+        }
+
         closeVaultModal();
 
         showToast(
@@ -3253,16 +3386,13 @@
             : "Coffre AES-256 déverrouillé !",
           "success"
         );
-
-        if (typeof cb === "function") {
-          await cb();
-        } else if (appState.settings.serverUrl && appState.settings.apiKey) {
-          await refreshServerOptions(false);
-        }
       } catch (err) {
         showErr(`Erreur de communication avec le coffre local : ${err.message}`);
       } finally {
-        if (submitBtn) submitBtn.disabled = false;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+        }
       }
     }
 
@@ -4148,6 +4278,23 @@
       });
     }
 
+    function getDangerCategoryTooltip(cat) {
+      if (!cat) return "";
+      const fallback = DEFAULT_DANGER_CATEGORIES.find((d) => Number(d.position) === Number(cat.position));
+      const ref = cat.reference || fallback?.reference;
+      const c2p = cat.c2p || fallback?.c2p;
+      const criteres = cat.criteres || fallback?.criteres;
+      const seuil = cat.seuil || fallback?.seuil;
+      let tooltip = cat.name || fallback?.name || "";
+      if (ref) {
+        tooltip += `\nRéférence : ${ref}`;
+        tooltip += `\nC2P : ${c2p || ""}`;
+        tooltip += `\nCritères d'exposition : ${criteres || ""}`;
+        tooltip += `\nSeuil réglementaire : ${seuil || ""}`;
+      }
+      return tooltip;
+    }
+
     // Rendu de la grille des pictogrammes de dangers DigiRisk
     function renderDangerGrid() {
       const grid = document.getElementById("dangerGrid");
@@ -4155,7 +4302,7 @@
       appState.categories.forEach((cat) => {
         const item = document.createElement("div");
         item.className = "danger-item" + (appState.selectedCategory === Number(cat.position) ? " active" : "");
-        item.title = cat.name;
+        item.title = getDangerCategoryTooltip(cat);
         const imgPath = `img/categorieDangers/${cat.thumbnail_name}.png`;
         item.innerHTML = `<img src="${imgPath}" alt="${cat.name}" loading="lazy" />`;
         item.onclick = (e) => {
@@ -4177,13 +4324,16 @@
       const riskChip = document.getElementById("submitBtnRiskChip");
       const img = document.getElementById("selectedDangerImg");
       const lbl = document.getElementById("selectedDangerLabel");
+      const catObj = appState.categories.find((c) => Number(c.position) === Number(position)) || { position, name };
+      const fullTooltip = getDangerCategoryTooltip(catObj);
 
       if (img) {
         img.src = imgPath;
-        img.title = name;
+        img.title = fullTooltip;
       }
       if (riskChip) {
         riskChip.classList.add("visible");
+        riskChip.title = fullTooltip;
       }
       if (lbl) {
         lbl.textContent = name;
@@ -4494,7 +4644,9 @@
     }
 
     const STEP_CHECK_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-    const STEP_PLUS_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
+    const STEP_RISK_SIGN_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+    const STEP_RISK_PLUS_SVG = `${STEP_RISK_SIGN_SVG}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>`;
+    const STEP_RISK_CHECK_SVG = `${STEP_RISK_SIGN_SVG}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
     const STEP_DESC_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>`;
     const STEP_EVAL_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>`;
     const STEP_ACTION_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>`;
@@ -4515,7 +4667,7 @@
       const subRisk = document.getElementById("stepSubRisk");
       if (itemRisk && circleRisk && subRisk) {
         itemRisk.className = "risk-step-item " + (hasCategory ? "done" : "active");
-        circleRisk.innerHTML = hasCategory ? STEP_CHECK_SVG : STEP_PLUS_SVG;
+        circleRisk.innerHTML = hasCategory ? STEP_RISK_CHECK_SVG : STEP_RISK_PLUS_SVG;
         if (hasCategory) {
           const catObj = appState.categories.find((c) => Number(c.position) === Number(appState.selectedCategory));
           const shortName = (catObj ? catObj.name : "Sélectionné").replace(/^Risques?\s+(liés?\s+(aux?|à\s+la|à\s+l'|au)\s+|de\s+|d')/i, "");
@@ -4655,14 +4807,14 @@
       } : null;
 
       btn.disabled = true;
-      if (plusTxt) plusTxt.innerHTML = `&#x23F3;`;
+      if (plusTxt) plusTxt.innerHTML = `<span class="btn-spinner" style="margin-right:0;"></span>`;
 
       try {
         const result = await sendRiskAndTaskToServer(riskPayload, taskPayload);
         const refText = result.risk_ref ? `${result.risk_ref} (${result.assessment_ref || ""})` : `#${result.id}`;
         const nbPhotos = Array.isArray(riskPayload.photos) ? riskPayload.photos.length : 0;
         document.getElementById("modalRiskTitle").textContent = `AJOUT DU RISQUE ${result.risk_ref || ""}`;
-        showToast(`Risque ${refText}${nbPhotos > 0 ? ` + ${nbPhotos} photo(s)` : ""}${taskPayload ? " + Tâche" : ""} créé avec succès !`, "success");
+        showToast(`Risque ${refText}${nbPhotos > 0 ? ` + ${nbPhotos} photo(s)` : ""}${taskPayload ? " + Action" : ""} créé avec succès !`, "success");
         resetRiskForm();
       } catch (err) {
         // En cas d'absence de réseau ou d'erreur serveur, mise en file d'attente locale dans Data/settings/
@@ -4675,7 +4827,9 @@
         showToast(`Serveur injoignable (${err.message}). Risque sauvegardé en local pour synchronisation !`, "error");
         resetRiskForm();
       } finally {
-        if (plusTxt) plusTxt.innerHTML = `&#xFF0B;`;
+        if (plusTxt) {
+          plusTxt.innerHTML = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>`;
+        }
         validateFormState();
       }
     }
