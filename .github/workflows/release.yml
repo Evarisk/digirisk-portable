@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -124,7 +124,7 @@ jobs:
           Get-Content "SHA256SUMS.txt"
 
       - name: Upload build artifacts to GitHub Actions run
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: DigiRiskPortable-${{ steps.meta.outputs.version }}
           path: |
